@@ -43,8 +43,28 @@ void createWorld()
     }
   }
 }
-// Rand Positions
 
+// create random
+int getRandom(int low, int high){
+  double myRand = rand()/(1.0 + RAND_MAX);
+  int range = rangeHigh - rangeLow +1;
+  int myRand_scaled = (myRand * range)  rangeLow;
+  return myRand_scaled;
+}
+
+// Rand Positions
+void randPos();
+void randPos()
+{
+  int i, j, result, low = 0, high = 15, place[4]= {-1};
+  struc timeval time;
+  gettimeofday(&time, NULL);
+  srandom((unsigned int) time.tv_usec);
+
+  for(i = 0; i < 4; i++)
+  {
+  }
+}
 
 
 // Run4Gold
