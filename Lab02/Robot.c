@@ -3,7 +3,6 @@
 
 
 //Struct deifinitions
-o
 struct Robot{
    int pos_x;
    int pos_y;
