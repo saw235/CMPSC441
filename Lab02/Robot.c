@@ -12,6 +12,7 @@ struct Robot{
 struct GoldBar{
    int pos_x;
    int pos_y;
+   bool available;
 }
 
 struct Bomb{
@@ -78,9 +79,24 @@ void randPos()
 
 
 
-// Check for available gold
-bool MaphasGold(struct Workspace* map)
+
+// Update map
+void UpdateWorkspace(struct Workspace* map)
 {
+  for(int i = 0; i < 4; i++)
+  {
+    for(int j = 0; j < 4; j++)
+    {
+      map->pos[i][j] ='-';
+    }
+  }
+
+  //update gold position on map
+  if (map->gb1.available) { map->pos[map->gb1.pos_x][map->gb1.pos_y] = 'R';}
+  if (map->gb2.available) { map->pos[map->gb2.pos_x][map->gb2.pos_y] = 'R';}
+  //update wall-e's position on the map
+  map->pos[map->wall_e.pos_x][map->wall_e.pos_y] = 'R';
+
  
   return (map->n_gold != 0)?1:false;
 }
@@ -89,10 +105,26 @@ bool MaphasGold(struct Workspace* map)
 // Check next Square
 // Check for bomb
 // jump next Square
+
+
 // Check Gold
-bool hasGold(struct Workspace* 
-// Get Gold
+bool hasGold(struct Workspace* map)
+{
+   int pos_x = map->wall_e.pos_x;
+   int pos_y = map->wall_e.pos_y;
+
+   if (map->pos[pos_x][pos_y] == 'G')
+ 	{
+	   return 1;
+	}
+   else  { return 0;}  
+
 }
+
+
+// Get Gold
+
+
 
 int main()
 {
