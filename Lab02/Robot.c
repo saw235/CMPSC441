@@ -160,6 +160,18 @@ bool hasGold(struct Workspace* map)
 // Get Gold
 
 
+// Print out the map
+void printMap(Struct Workspace* map)
+{
+  //char *string[256];
+  int i;
+
+  for(i = 0; i < 4; i++)
+  {
+    printf("------------------------/n| %s | %s | %s | %s|/n", map->pos[i][0], map->pos[i][1], map->pos[i][2], map->pos[i][3]);
+  }
+  printf("------------------------/n");
+}
 
 int main()
 {
