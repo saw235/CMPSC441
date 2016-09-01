@@ -64,14 +64,28 @@ int getRandom(int low, int high){
 void randPos();
 void randPos()
 {
-  int i, j, result, low = 0, high = 15, place[4]= {-1};
+  int i, result, low = 0, high = 15, place[4]= {-1};
+  bool similar;
+
   struc timeval time;
   gettimeofday(&time, NULL);
   srandom((unsigned int) time.tv_usec);
 
   for(i = 0; i < 4; i++)
   {
+    do{
+      similar = fasle;
+      result = getRandom(low, high);
+      for(j = 0; j < 4; j++){
+        if(result == place[j]){
+          similar = true;
+        }
+      }
+    }while(similar);
+    place[i] = result;
   }
+
+  // add the positions to the workplace
 }
 
 
