@@ -3,11 +3,7 @@
 
 
 //Struct deifinitions
-struct Workspace{
-   char pos[4][4];
-   int  n_gold;
-};
-
+o
 struct Robot{
    int pos_x;
    int pos_y;
@@ -23,8 +19,19 @@ struct Bomb{
    int pos_y;
 }
 
+struct Workspace{
+   char pos[4][4];
+   int  n_gold
+   struct Robot wall_e;
+   struct GoldBar gb1;
+   struct GoldBar gb2;
 
-// API?
+   struct Bomb bmb;
+	
+};
+
+
+// API
 void API();
 void API()
 {
@@ -72,7 +79,7 @@ void randPos()
 
 
 // Check for available gold
-bool hasGold(struct Workspace* map)
+bool MaphasGold(struct Workspace* map)
 {
  
   return (map->n_gold != 0)?1:false;
@@ -83,7 +90,9 @@ bool hasGold(struct Workspace* map)
 // Check for bomb
 // jump next Square
 // Check Gold
+bool hasGold(struct Workspace* 
 // Get Gold
+}
 
 int main()
 {
