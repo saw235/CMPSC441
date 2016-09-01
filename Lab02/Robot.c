@@ -39,16 +39,16 @@ void API()
 }
 
 // Create World
-void createWorld();
-void createWorld()
+void createWorld(struct Workspace* map)
 {
   for(int i = 0; i < 4; i++)
   {
     for(int j = 0; j < 4; j++)
     {
-      var[i][j] ='-';
+      map->pos[i][j] = '-';
     }
   }
+  randPos(map);
 }
 
 // create random
@@ -60,31 +60,53 @@ int getRandom(int low, int high){
 }
 
 // Rand Positions
-void randPos();
-void randPos()
+void randPos(struct Workspace* map)
 {
-  int i, result, low = 0, high = 15, place[4]= {-1};
+  int x, y, result, low = 0, high = 15, place[4]= {-1};
   bool similar;
 
   struc timeval time;
   gettimeofday(&time, NULL);
   srandom((unsigned int) time.tv_usec);
 
-  for(i = 0; i < 4; i++)
+  for(x = 0; x < 4; y++)
   {
     do{
       similar = fasle;
       result = getRandom(low, high);
-      for(j = 0; j < 4; j++){
-        if(result == place[j]){
+      for(y = 0; y < 4; y++){
+        if(result == place[y]){
           similar = true;
         }
       }
     }while(similar);
-    place[i] = result;
+    place[x] = result;
   }
 
   // add the positions to the workplace
+  x = place[0] / 4;
+  y = place[0] % 4;
+  map->Wall_e.pos_x = x;
+  map->Wall_e.pos_y = y;
+  map->pos[x][y] = 'R';
+
+  x = place[1] / 4;
+  y = place[1] % 4;
+  map->bmb.pos_x = x;
+  map->bmb.pos_y = y;
+  map->pos[x][y] = 'B';
+
+  x = place[2] / 4;
+  y = place[2] % 4;
+  map->gb1.pos_x = x;
+  map->gb1.pos_y = y;
+  map->pos[x][y] = 'G';
+
+  x = place[3] / 4;
+  y = place[3] % 4;
+  map->gb2.pos_x = x;
+  map->gb2.pos_y = y;
+  map->pos[x][y] = 'G';
 }
 
 
