@@ -133,16 +133,21 @@ void UpdateWorkspace(struct Workspace* map)
   map->pos[map->wall_e.pos_x][map->wall_e.pos_y] = 'R';
 
  
-  return (map->n_gold != 0)?1:false;
 }
 
+
+//check if there is gold available in the map
+bool MapHasGold(struct Workspace* map)
+{
+   return (map->n_gold != 0)?1:false;
+}
 
 // Check next Square
 // Check for bomb
 // jump next Square
 
 
-// Check Gold
+// Check if Robot Stumble Upon Gold
 bool hasGold(struct Workspace* map)
 {
    int pos_x = map->wall_e.pos_x;
