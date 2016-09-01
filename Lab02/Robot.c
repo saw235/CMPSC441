@@ -5,6 +5,7 @@
 //Struct deifinitions
 struct Workspace{
    char pos[4][4];
+   int  n_gold;
 };
 
 struct Robot{
@@ -46,13 +47,23 @@ void createWorld()
 
 
 
-	// Run4Gold
-	// Check for available gold
-	// Check next Square
-	// Check for bomb
-	// jump next Square
-	// Check Gold
-	// Get Gold
+// Run4Gold
+
+
+
+// Check for available gold
+bool hasGold(struct Workspace* map)
+{
+ 
+  return (map->n_gold != 0)?1:false;
+}
+
+
+// Check next Square
+// Check for bomb
+// jump next Square
+// Check Gold
+// Get Gold
 
 int main()
 {
