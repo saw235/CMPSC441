@@ -150,8 +150,9 @@ void moveNext() {} // end moveNext()
 // hasGold()
 // Description: Check if Robot Stumble Upon Gold
 bool hasGold(struct Workspace *map) {
-  printf("Checking if there is still gold present in the map.") // For debugging
-      int pos_x = map->wall_e.pos_x;
+  printf("Checking if there is still gold present in the map."); // For debugging
+  
+  int pos_x = map->wall_e.pos_x;
   int pos_y = map->wall_e.pos_y;
 
   if (map->pos[pos_x][pos_y] == 'G') {
