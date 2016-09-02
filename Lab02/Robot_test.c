@@ -30,37 +30,13 @@ struct Workspace{
 	
 };
 
-
-// API
-void API();
-void API()
-{
-	
-}
-
-// Create World
-void createWorld(struct Workspace* map)
-{
-  for(int i = 0; i < 4; i++)
-  {
-    for(int j = 0; j < 4; j++)
-    {
-      map->pos[i][j] = '-';
-    }
-  }
-
-  //Initialize everything to random position
-  //randPos(map);  //Commented out to test cause its not working
-
-}
-
-//get a random number within range
 int getRandom(int rangeLow, int rangeHigh) {
     double myRand = rand()/(1.0 + RAND_MAX);
     int range = rangeHigh - rangeLow + 1;
     int myRand_scaled = (myRand * range) + rangeLow;
     return myRand_scaled;
 }
+
 
 // Rand Positions
 void randPos(struct Workspace* map)
@@ -111,63 +87,22 @@ void randPos(struct Workspace* map)
   map->pos[x][y] = 'G';
 }
 
-
-
-
-// Run4Gold
-
-
-
-
-// Update map
-void UpdateWorkspace(struct Workspace* map)
+// Create World
+void createWorld(struct Workspace* map)
 {
   for(int i = 0; i < 4; i++)
   {
     for(int j = 0; j < 4; j++)
     {
-      map->pos[i][j] ='-';
+      map->pos[i][j] = '-';
     }
   }
 
-  //update gold position on map
-  if (map->gb1.available) { map->pos[map->gb1.pos_x][map->gb1.pos_y] = 'R';}
-  if (map->gb2.available) { map->pos[map->gb2.pos_x][map->gb2.pos_y] = 'R';}
-  //update wall-e's position on the map
-  map->pos[map->wall_e.pos_x][map->wall_e.pos_y] = 'R';
+  //Initialize everything to random position
 
- 
+
+  //randPos(map);  //Commented out to test cause its not working
 }
-
-
-//check if there is gold available in the map
-bool MapHasGold(struct Workspace* map)
-{
-   return (map->n_gold != 0)?1:false;
-}
-
-// Check next Square
-// Check for bomb
-// jump next Square
-
-
-// Check if Robot Stumble Upon Gold
-bool hasGold(struct Workspace* map)
-{
-   int pos_x = map->wall_e.pos_x;
-   int pos_y = map->wall_e.pos_y;
-
-   if (map->pos[pos_x][pos_y] == 'G')
- 	{
-	   return 1;
-	}
-   else  { return 0;}  
-
-}
-
-
-// Get Gold
-
 
 // Print out the map
 void printMap(struct Workspace* map)
@@ -180,6 +115,15 @@ void printMap(struct Workspace* map)
     printf("------------------------\n| %c | %c | %c | %c |\n", map->pos[i][0], map->pos[i][1], map->pos[i][2], map->pos[i][3]);
   }
   printf("------------------------\n");
+}
+
+void API()
+{
+    struct Workspace map;
+
+    //Initialize all struct variables
+    createWorld(&map);	
+    printMap(&map);
 }
 
 
