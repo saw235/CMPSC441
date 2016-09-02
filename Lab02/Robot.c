@@ -54,7 +54,7 @@ void randPos(struct Workspace *map) {
   gettimeofday(&time, NULL);
   srandom((unsigned int)time.tv_usec);
 
-  for (x = 0; x < 4; y++) {
+  for (x = 0; x < 4; x++) {
     do {
       similar = false;
       result = getRandom(low, high);
@@ -95,7 +95,7 @@ void randPos(struct Workspace *map) {
 // Description: Initialize the workspace
 void createWorld(struct Workspace *map) {
 
-  printf("Populating map with blanks"); // For debugging, remove if not needed
+  printf("Populating map with blanks.\n"); // For debugging, remove if not needed
 
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
@@ -103,8 +103,9 @@ void createWorld(struct Workspace *map) {
     }
   }
 
+  printf("Initializing to random position");
   // Initialize everything to random position
-  // randPos(map);  //Commented out to test cause its not working
+   randPos(map);  //Commented out to test cause its not working
 
 } // end createWorld()
 
@@ -150,7 +151,7 @@ void moveNext() {} // end moveNext()
 // hasGold()
 // Description: Check if Robot Stumble Upon Gold
 bool hasGold(struct Workspace *map) {
-  printf("Checking if there is still gold present in the map."); // For debugging
+  printf("Checking if there is still gold present in the map.\n"); // For debugging
   
   int pos_x = map->wall_e.pos_x;
   int pos_y = map->wall_e.pos_y;
@@ -166,7 +167,7 @@ bool hasGold(struct Workspace *map) {
 // getGold()
 // Description: Pick up the gold
 void getGold() {
-  printf("Picking up gold"); // For debugging
+  printf("Picking up gold\n"); // For debugging
 } // end getGold()
 
 // Run4Gold()
@@ -210,6 +211,7 @@ int main() {
   // Initialize all struct variables
   createWorld(&map);
   printMap(&map);
+
 
   Run4Gold(&map);
 
