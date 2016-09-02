@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+const bool test = true;  //set this to true when debugging to avoid infinite loop from unfinished code
+
 // Struct deifinitions
 struct Robot {
   int pos_x;
@@ -174,12 +176,15 @@ void getGold() {
 // Description: Start the sequence for the Robot to search for gold
 void Run4Gold(struct Workspace *map) {
   // Check if there is still golds in the map
-  while (!MapHasGold(map)) {
+  while (MapHasGold(map)) {
     // debug message, should be commented out if not needed
-    printf("Checking next square.\n");
+    if (test) {printf("There is still gold in the map!\nChecking next square.\n");}
 
     // start sequence to examine next square
     checkNextSquare();
+
+    // created to break out of the loop when debugging
+    if (test) { break;}
   }
 
   // end if no gold
