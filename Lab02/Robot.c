@@ -153,9 +153,14 @@ void randomMove(int* x, int* y)
 // Description: A move is valid if the Robot is not on a bomb and not out of range of the map
 bool isValidMove(struct Workspace *map, int x, int y)
 {
-
+  bool valid;
+  if(map->Wall_e.pos_x + x > 4 || map->Wall_e.pos_x + x < 0){valid = false;} // check if x is out of range
+  else if(map->Wall_e.pos_y +y > 4 || map->Wall_e.posx + y < 0){valid = false;} // check if y is out of range
+  else if(hasBomb(map, map->Wall_e.pos_x + x, map->Wall_e.pos_y + y){valid = false;} // check if bomb is on the square
+  else{valid = true;}
+  return valid;
 }
-// Check next Square
+// Check next Squareompare/master...master?expand=1
 // Description: Check next square for possible movement
 void checkNextSquare(struct Workspace *map) {
 
@@ -185,7 +190,11 @@ void checkNextSquare(struct Workspace *map) {
 
 // hasBomb()
 // Description: Check if the square has bomb in it
-bool hasBomb() {} // end hasBomb()
+bool hasBomb(struct Workspace *map, int x, int y) {
+  bool bmb = false;
+  if (map->pos[x][y] == 'B'){bmb = true;}
+  return bmb;
+} // end hasBomb()
 
 // moveNext()
 // Description: Move robot to next square
