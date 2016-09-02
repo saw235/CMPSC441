@@ -6,6 +6,8 @@
 struct Robot{
    int pos_x;
    int pos_y;
+   
+   int n_goldcollected;
 };
 
 struct GoldBar{
@@ -38,31 +40,18 @@ void API()
 	
 }
 
-// Create World
-void createWorld(struct Workspace* map)
-{
-  for(int i = 0; i < 4; i++)
-  {
-    for(int j = 0; j < 4; j++)
-    {
-      map->pos[i][j] = '-';
-    }
-  }
-
-  //Initialize everything to random position
-  //randPos(map);  //Commented out to test cause its not working
-
-}
-
-//get a random number within range
+/**************************FUNCTIONS******************************/
+//getRandom()
+//Description: Takes in two ranges and return a random number between that.
 int getRandom(int rangeLow, int rangeHigh) {
     double myRand = rand()/(1.0 + RAND_MAX);
     int range = rangeHigh - rangeLow + 1;
     int myRand_scaled = (myRand * range) + rangeLow;
     return myRand_scaled;
-}
+} //end getRandom()
 
-// Rand Positions
+
+//randPos()
 void randPos(struct Workspace* map)
 {
   int x, y, result, low = 0, high = 15, place[4]= {-1};
@@ -85,7 +74,7 @@ void randPos(struct Workspace* map)
     }while(similar);
     place[x] = result;
   }
-// add the positions to the workplace
+  //add the positions to the workplace
   x = place[0] / 4;
   y = place[0] % 4;
   map->wall_e.pos_x = x;
@@ -100,7 +89,6 @@ void randPos(struct Workspace* map)
 
   x = place[2] / 4;
   y = place[2] % 4;
-  map->gb1.pos_x = x;
   map->gb1.pos_y = y;
   map->pos[x][y] = 'G';
 
@@ -109,17 +97,30 @@ void randPos(struct Workspace* map)
   map->gb2.pos_x = x;
   map->gb2.pos_y = y;
   map->pos[x][y] = 'G';
-}
+}//end randPos()
 
 
+//createWorld()
+//Description: Initialize the workspace
+void createWorld(struct Workspace* map)
+{
+  for(int i = 0; i < 4; i++)
+  {
+    for(int j = 0; j < 4; j++)
+    {
+      map->pos[i][j] = '-';
+    }
+  }
+
+  //Initialize everything to random position
+  //randPos(map);  //Commented out to test cause its not working
 
 
-// Run4Gold
+}//end createWorld()
 
 
-
-
-// Update map
+//UpdateWorkspace()
+//Description: Refreshes the map to reflect the current workspace
 void UpdateWorkspace(struct Workspace* map)
 {
   for(int i = 0; i < 4; i++)
@@ -136,22 +137,38 @@ void UpdateWorkspace(struct Workspace* map)
   //update wall-e's position on the map
   map->pos[map->wall_e.pos_x][map->wall_e.pos_y] = 'R';
 
- 
-}
+}//end UpdateWorkspace()
 
 
+//MapHasGold()
 //check if there is gold available in the map
 bool MapHasGold(struct Workspace* map)
 {
    return (map->n_gold != 0)?1:false;
-}
+}//end MapHasGold()
 
 // Check next Square
-// Check for bomb
-// jump next Square
+void checkNextSquare()
+{
+	
+}//end checkNextSquare()
 
+//hasBomb()
+//Description: Check if the square has bomb in it
+bool hasBomb()
+{
+	
+}//end hasBond
 
-// Check if Robot Stumble Upon Gold
+//moveNext()
+//Description: Move robot to next square
+void moveNext()
+{
+
+}//end moveNext()
+
+//hasGold()
+//Description: Check if Robot Stumble Upon Gold
 bool hasGold(struct Workspace* map)
 {
    int pos_x = map->wall_e.pos_x;
@@ -163,13 +180,31 @@ bool hasGold(struct Workspace* map)
 	}
    else  { return 0;}  
 
-}
+}//end hasGold()
 
 
-// Get Gold
+//getGold()
+//Description: Pick up the gold 
+void getGold()
+{
 
+}//end getGold()
 
-// Print out the map
+//Run4Gold()
+//Description: Start the sequence for the Robot to search for gold
+void Run4Gold()
+{
+	//Check if there is still golds in the map
+	//end if no gold
+	
+
+	//if there is still gold
+	//check next square
+	
+}//end Run4Gold()
+
+//printMap()
+//Description: Output the map in a readable format to the console
 void printMap(struct Workspace* map)
 {
   //char *string[256];
@@ -180,7 +215,10 @@ void printMap(struct Workspace* map)
     printf("------------------------\n| %c | %c | %c | %c |\n", map->pos[i][0], map->pos[i][1], map->pos[i][2], map->pos[i][3]);
   }
   printf("------------------------\n");
-}
+}//end printMap()
+
+
+/**************************END FUNCTIONS******************************/
 
 
 int main()
