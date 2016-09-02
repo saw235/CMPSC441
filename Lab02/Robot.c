@@ -134,21 +134,62 @@ void UpdateWorkspace(struct Workspace *map) {
 } // end UpdateWorkspace()
 
 // MapHasGold()
-// check if there is gold available in the map
+// Description: Check if there is gold available in the map
 bool MapHasGold(struct Workspace *map) {
   return (map->n_gold != 0);
 } // end MapHasGold()
 
+
+// randomMove()
+// Description: Get a random direction : Up, down, left, right , topright, topleft, bottomright, bottomleft
+void randomMove(int* x, int* y)
+{
+  *x = getRandom(-1,1);
+  *y = getRandom(-1,1); 
+} // end randomMove()
+
+
+// isValidMove()
+// Description: A move is valid if the Robot is not on a bomb and not out of range of the map
+bool isValidMove(struct Workspace *map, int x, int y)
+{
+
+}
 // Check next Square
-void checkNextSquare() {} // end checkNextSquare()
+// Description: Check next square for possible movement
+void checkNextSquare(struct Workspace *map) {
+
+  //Possible move range for x and y are -1 to 1
+  int x , y = 0;
+  
+
+  //keep checking for possible move until we found one
+  while(true){
+
+	//generate a random direction
+	randomMove(&x,&y);
+
+
+	//if the move is valid then break out of loop
+        if (isValidMove(map,x,y)) {break;}
+
+	if (test) {break;} //should be commented out when ifValidMove() is working
+	}
+	
+
+	
+
+
+  
+} // end checkNextSquare()
 
 // hasBomb()
 // Description: Check if the square has bomb in it
-bool hasBomb() {} // end hasBond
+bool hasBomb() {} // end hasBomb()
 
 // moveNext()
 // Description: Move robot to next square
-void moveNext() {} // end moveNext()
+void moveNext(int x, int y) {} // end moveNext()
 
 // hasGold()
 // Description: Check if Robot Stumble Upon Gold
@@ -181,7 +222,7 @@ void Run4Gold(struct Workspace *map) {
     if (test) {printf("There is still gold in the map!\nChecking next square.\n");}
 
     // start sequence to examine next square
-    checkNextSquare();
+    checkNextSquare(map);
 
     // created to break out of the loop when debugging
     if (test) { break;}
