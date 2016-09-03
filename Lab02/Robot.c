@@ -35,9 +35,25 @@ struct Workspace {
   struct Bomb bmb;
 };
 
-// API
-void API();
-void API() {}
+// Forward Declaration
+int getRandom(int rangeLow, int rangeHigh); 
+void randPos(struct Workspace *map);
+void createWorld(struct Workspace *map);
+void updateWorkspace(struct Workspace *map);
+bool MapHasGold(struct Workspace *map);
+void randomMove(int* x, int* y);
+bool hasBomb(struct Workspace *map, int x, int y);
+bool isValidMove(struct Workspace *map, int x, int y);
+void checkNextSquare(struct Workspace *map);
+void moveNext(struct Workspace *map,const int x,const int y);
+bool hasGold(struct Workspace *map);
+void getGold(struct Workspace *map);
+void Run4Gold(struct Workspace *map);
+void printMap(struct Workspace *map);
+void init(struct Workspace* map);
+
+//end Forward Declaration
+
 
 /**************************FUNCTIONS******************************/
 // getRandom()
@@ -94,14 +110,6 @@ void randPos(struct Workspace *map) {
   map->gb2.pos_y = y;
   map->pos[x][y] = 'G';
 
-  // Set turn count to zero
-  map->turnCount = 0;
-  // Set the number of Gold
-  map->n_gold = 2;
-  // make gold available
-  map->gb1.available = true;
-  map->gb2.available = true;
-
 } // end randPos()
 
 // createWorld()
@@ -118,12 +126,9 @@ void createWorld(struct Workspace *map) {
 
   printf("Initializing to random position");
   // Initialize everything 
-  map->wall_e.n_goldcollected = 0;
-  map->n_gold = 2;
-  map->gb1.available = true;
-  map->gb2.available = true;
+  init(map);
   // Place everything to random position
-   randPos(map);  //Commented out to test cause its not working
+   randPos(map);
 
 } // end createWorld()
 
@@ -162,11 +167,14 @@ bool MapHasGold(struct Workspace *map) {
 // Description: Get a random direction : Up, down, left, right , topright, topleft, bottomright, bottomleft
 void randomMove(int* x, int* y)
 {
+  //Randomize a direction
+  do {
   *x = getRandom(-1,1);
   *y = getRandom(-1,1);
-
-  printf("x = %d", *x);
-  printf("y = %d", *y);
+  } while ((*x == 0) && (*y == 0)); // make sure it is not (0,0) 
+  
+  printf("move_x = %d\n", *x);
+  printf("move_y = %d\n", *y);
  
 } // end randomMove()
 
@@ -185,13 +193,15 @@ bool hasBomb(struct Workspace *map, int x, int y) {
 bool isValidMove(struct Workspace *map, int x, int y)
 {
   bool valid;
-  if(map->wall_e.pos_x + x > 4 || map->wall_e.pos_x + x < 0){valid = false;} // check if x is out of range
-  else if(map->wall_e.pos_y + y > 4 || map->wall_e.pos_y + y < 0){valid = false;} // check if y is out of range
+  if((map->wall_e.pos_x + x >= 4) || (map->wall_e.pos_x + x) < 0){valid = false;} // check if x is out of range
+  else if((map->wall_e.pos_y + y >= 4) || (map->wall_e.pos_y + y < 0)){valid = false;} // check if y is out of range
   else if(hasBomb(map, map->wall_e.pos_x + x, map->wall_e.pos_y + y)){valid = false;} // check if bomb is on the square
   else{
     valid = true;
     printf("Safe to move.\n");
   }
+
+  printf("\n Move is %d \n", valid);
   return valid;
 }
 
@@ -201,12 +211,12 @@ bool isValidMove(struct Workspace *map, int x, int y)
 void checkNextSquare(struct Workspace *map) {
 
   //Possible move range for x and y are -1 to 1
-  int x , y = 0;
-  
+  int x , y ;
 
   //keep checking for possible move until we found one
   while(true){
 
+        x = y = 0;
 	//generate a random direction
 	randomMove(&x,&y);
 
@@ -275,10 +285,8 @@ void Run4Gold(struct Workspace *map) {
     // debug message, should be commented out if not needed
     if (test) {printf("There is still gold in the map!\nChecking next square.\n");}
 
-    // start sequence to examine next square and move    
+    // start sequence to examine next square and make a move    
     checkNextSquare(map);
-    updateWorkspace(map);
-    printMap(map);
 
     if (hasGold(map))
 	{
@@ -287,7 +295,7 @@ void Run4Gold(struct Workspace *map) {
 
     printMap(map);
     // created to break out of the loop when debugging
-    if (test) { break;}
+    //if (test) { break;}
   }
 
   // end if no gold
@@ -303,6 +311,7 @@ void printMap(struct Workspace *map) {
   updateWorkspace(map);
   int i;
 
+  printf("\nTurn: %i\n", map->turnCount);
   for (i = 0; i < 4; i++) {
     printf("------------------------\n| %c | %c | %c | %c |\n", map->pos[0][i],
            map->pos[1][i], map->pos[2][i], map->pos[3][i]);
@@ -311,8 +320,8 @@ void printMap(struct Workspace *map) {
 } // end printMap()
 
 
-//init2Fix()
-void init2Fix(struct Workspace* map)
+//init()
+void init(struct Workspace* map)
 {
   map->n_gold = 2;
 
@@ -331,7 +340,11 @@ void init2Fix(struct Workspace* map)
   map->bmb.pos_x = 0;
   map->bmb.pos_y = 3;
 
-}
+  // Set turn count to zero
+  map->turnCount = 0;
+
+
+}//end init()
  
 
 
@@ -345,48 +358,23 @@ int main() {
   struct Workspace map;
 
   // Initialize all struct variables
-  // createWorld(&map);
-  init2Fix(&map);
+  createWorld(&map);
   printMap(&map);
+
+  Run4Gold(&map);
+  // int x, y = 0;
   
-  printf("Moving right by 1 unit\n");
-  moveNext(&map, 1, 0);
-  printMap(&map);
+  /*
+  while(true){
+  randomMove(&x,&y);
 
-  printf("Moving right by 1 unit\n");
-  moveNext(&map, 1, 0);
-  printMap(&map);
+  if(isValidMove(&map,x,y)) {break;}
+  }
 
-  hasGold(&map);
+  moveNext(&map,x,y);
+  printMap(&map);*/
 
-  printf("Moving right by 1 unit\n");
-  moveNext(&map, 1, 0);
-  hasGold(&map);
-  printMap(&map);
-
-  printf("Moving down by 1 unit\n");
-  moveNext(&map, 0, 1);
-  hasGold(&map);
-  printMap(&map);
-  
-  printf("Moving up by 1 unit\n");
-  moveNext(&map, 0, -1);
-  if (hasGold(&map))
-  {getGold(&map);}
-  printMap(&map);
-  
-  printf("Moving down by 1 unit\n");
-  moveNext(&map, 0, 1);
-  hasGold(&map);
-  printMap(&map);
-  
-  printf("Moving up by 1 unit\n");
-  moveNext(&map, 0, -1);
-  if (hasGold(&map))
-  {getGold(&map);}
-  printMap(&map);
-
- // Run4Gold(&map);
+  for (int i = 0; i < 10; i++) { printf("\n %d \n", getRandom(-1,1));}
 
   return 0;
 }
