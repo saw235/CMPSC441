@@ -370,6 +370,7 @@ void robotAPI(struct Workspace *map){
   Run4Gold(map);
 
 }
+/**************************END API***********************************/
 
 int main() {
   
