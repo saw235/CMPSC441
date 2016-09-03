@@ -118,20 +118,11 @@ void randPos(struct Workspace *map) {
 // Description: Initialize the workspace
 void createWorld(struct Workspace *map) {
 
-  printf(
-      "Populating map with blanks.\n"); // For debugging, remove if not needed
-
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       map->pos[i][j] = '-';
     }
   }
-
-  printf("Initializing to random position");
-  // Initialize everything
-  init(map);
-  // Place everything to random position
-  randPos(map);
 
 } // end createWorld()
 
@@ -139,11 +130,8 @@ void createWorld(struct Workspace *map) {
 // Description: Refreshes the map to reflect the current workspace
 void updateWorkspace(struct Workspace *map) {
 
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
-      map->pos[i][j] = '-';
-    }
-  }
+  // use createWorld() to create fill with blanks
+  createWorld(map);
 
   // update gold position on map
   if (map->gb1.available) {
@@ -344,6 +332,12 @@ void printMap(struct Workspace *map) {
 
 // init()
 void init(struct Workspace *map) {
+  // Initialize blank world
+  createWorld(map);
+  printf("Initializing to random position");
+  // Place everything to random position
+  randPos(map);
+
   map->n_gold = 2;
 
   map->wall_e.pos_x = 0;
@@ -370,7 +364,7 @@ void init(struct Workspace *map) {
 
 /*******************************API***********************************/
 void robotAPI(struct Workspace *map){
-  createWorld(map);
+  init(map);
   printMap(map);
   
   Run4Gold(map);
