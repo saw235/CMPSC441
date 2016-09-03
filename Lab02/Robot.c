@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 const bool test = true;  //set this to true when debugging to avoid infinite loop from unfinished code
 
@@ -25,7 +26,8 @@ struct Bomb {
 
 struct Workspace {
   char pos[4][4];
-  int n_gold;
+  int n_gold, turnCount;
+
   struct Robot wall_e;
   struct GoldBar gb1;
   struct GoldBar gb2;
@@ -53,7 +55,7 @@ void randPos(struct Workspace *map) {
   bool similar;
 
   struct timeval time;
-  gettimeofday(&time, NULL);
+  //gettimeofday(&time, NULL);
   srandom((unsigned int)time.tv_usec);
 
   for (x = 0; x < 4; x++) {
@@ -91,6 +93,10 @@ void randPos(struct Workspace *map) {
   map->gb2.pos_x = x;
   map->gb2.pos_y = y;
   map->pos[x][y] = 'G';
+
+  // Set turn count to zero
+  map->turnCount = 0;
+
 } // end randPos()
 
 // createWorld()
@@ -131,6 +137,8 @@ void UpdateWorkspace(struct Workspace *map) {
   // update wall-e's position on the map
   map->pos[map->wall_e.pos_x][map->wall_e.pos_y] = 'R';
 
+  // update the bomb position??
+
 } // end UpdateWorkspace()
 
 // MapHasGold()
@@ -148,16 +156,29 @@ void randomMove(int* x, int* y)
   *y = getRandom(-1,1); 
 } // end randomMove()
 
+// hasBomb()
+// Description: Check if the square has bomb in it
+bool hasBomb(struct Workspace *map, int x, int y) {
+  bool bmb = false;
+  if (map->pos[x][y] == 'B'){
+    bmb = true;
+    printf("Bomb has been found, not moving.\n");
+  }
+  return bmb;
+} // end hasBomb()
 
 // isValidMove()
 // Description: A move is valid if the Robot is not on a bomb and not out of range of the map
 bool isValidMove(struct Workspace *map, int x, int y)
 {
   bool valid;
-  if(map->Wall_e.pos_x + x > 4 || map->Wall_e.pos_x + x < 0){valid = false;} // check if x is out of range
-  else if(map->Wall_e.pos_y +y > 4 || map->Wall_e.posx + y < 0){valid = false;} // check if y is out of range
-  else if(hasBomb(map, map->Wall_e.pos_x + x, map->Wall_e.pos_y + y){valid = false;} // check if bomb is on the square
-  else{valid = true;}
+  if(map->wall_e.pos_x + x > 4 || map->wall_e.pos_x + x < 0){valid = false;} // check if x is out of range
+  else if(map->wall_e.pos_y + y > 4 || map->wall_e.pos_y + y < 0){valid = false;} // check if y is out of range
+  else if(hasBomb(map, map->wall_e.pos_x + x, map->wall_e.pos_y + y)){valid = false;} // check if bomb is on the square
+  else{
+    valid = true;
+    printf("Safe to move.\n");
+  }
   return valid;
 }
 // Check next Squareompare/master...master?expand=1
@@ -187,14 +208,6 @@ void checkNextSquare(struct Workspace *map) {
 
   
 } // end checkNextSquare()
-
-// hasBomb()
-// Description: Check if the square has bomb in it
-bool hasBomb(struct Workspace *map, int x, int y) {
-  bool bmb = false;
-  if (map->pos[x][y] == 'B'){bmb = true;}
-  return bmb;
-} // end hasBomb()
 
 // moveNext()
 // Description: Move robot to next square
@@ -249,11 +262,12 @@ void printMap(struct Workspace *map) {
   // char *string[256];
   int i;
 
+  printf("\nTurn: %i", map->turnCount);
   for (i = 0; i < 4; i++) {
-    printf("------------------------\n| %c | %c | %c | %c |\n", map->pos[i][0],
-           map->pos[i][1], map->pos[i][2], map->pos[i][3]);
+    printf("\n-----------------\n| %c | %c | %c | %c |\n", map->pos[i][0], map->pos[i][1], 
+      map->pos[i][2], map->pos[i][3]);
   }
-  printf("------------------------\n");
+  printf("-----------------\n");
 } // end printMap()
 
 /**************************END FUNCTIONS******************************/
