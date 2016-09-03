@@ -169,8 +169,8 @@ void randomMove(int* x, int* y)
 {
   //Randomize a direction
   do {
-  *x = getRandom(-1,1);
-  *y = getRandom(-1,1);
+  *x = getRandom(0,2)-1;
+  *y = getRandom(0,2)-1;
   } while ((*x == 0) && (*y == 0)); // make sure it is not (0,0) 
   
   printf("move_x = %d\n", *x);
@@ -272,7 +272,7 @@ void getGold(struct Workspace *map) {
 
   if((map->gb1.pos_x == map->wall_e.pos_x) && (map->gb1.pos_y == map->wall_e.pos_y) && map->gb1.available) { map->gb1.available = false; map->n_gold--; map->wall_e.n_goldcollected++;}
 
-  if((map->gb1.pos_x == map->wall_e.pos_x) && (map->gb1.pos_y == map->wall_e.pos_y) && map->gb2.available) { map->gb1.available = false; map->n_gold--; map->wall_e.n_goldcollected++;} 
+  if((map->gb1.pos_x == map->wall_e.pos_x) && (map->gb1.pos_y == map->wall_e.pos_y) && map->gb2.available) { map->gb2.available = false; map->n_gold--; map->wall_e.n_goldcollected++;} 
 } // end getGold()
 
 // Run4Gold()
@@ -298,6 +298,8 @@ void Run4Gold(struct Workspace *map) {
     //if (test) { break;}
   }
 
+
+  printMap(map);
   // end if no gold
   printf("There is no more gold in the map.\n");
   return;
@@ -374,7 +376,7 @@ int main() {
   moveNext(&map,x,y);
   printMap(&map);*/
 
-  for (int i = 0; i < 10; i++) { printf("\n %d \n", getRandom(-1,1));}
+ // for (int i = 0; i < 10; i++) { printf("\n %d \n", getRandom(-1,1));}
 
   return 0;
 }
