@@ -335,10 +335,10 @@ void printMap(struct Workspace *map) {
 
   printf("\nTurn: %i\n", map->turnCount);
   for (i = 0; i < 4; i++) {
-    printf("------------------------\n| %c | %c | %c | %c |\n", map->pos[0][i],
+    printf("-----------------\n| %c | %c | %c | %c |\n", map->pos[0][i],
            map->pos[1][i], map->pos[2][i], map->pos[3][i]);
   }
-  printf("------------------------\n");
+  printf("-----------------\n");
 } // end printMap()
 
 // init()
