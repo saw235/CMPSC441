@@ -339,22 +339,12 @@ void init(struct Workspace *map) {
   randPos(map);
 
   map->n_gold = 2;
-
-  map->wall_e.pos_x = 0;
-  map->wall_e.pos_y = 0;
+  
   map->wall_e.n_goldcollected = 0;
-
-  map->gb1.pos_x = 3;
-  map->gb1.pos_y = 0;
+  
   map->gb1.available = true;
-
-  map->gb2.pos_x = 2;
-  map->gb2.pos_y = 3;
   map->gb2.available = true;
-
-  map->bmb.pos_x = 0;
-  map->bmb.pos_y = 3;
-
+  
   // Set turn count to zero
   map->turnCount = 0;
 
