@@ -117,7 +117,12 @@ void createWorld(struct Workspace *map) {
   }
 
   printf("Initializing to random position");
-  // Initialize everything to random position
+  // Initialize everything 
+  map->wall_e.n_goldcollected = 0;
+  map->n_gold = 2;
+  map->gb1.available = true;
+  map->gb2.available = true;
+  // Place everything to random position
    randPos(map);  //Commented out to test cause its not working
 
 } // end createWorld()
@@ -142,29 +147,14 @@ void updateWorkspace(struct Workspace *map) {
   // update wall-e's position on the map
   map->pos[map->wall_e.pos_x][map->wall_e.pos_y] = 'R';
 
-  // update the bomb position??
   map->pos[map->bmb.pos_x][map->bmb.pos_y] = 'B';
 
 } // end updateWorkspace()
 
-// printMap()
-// Description: Output the map in a readable format to the console
-void printMap(struct Workspace *map) {
-  // char *string[256];
-  int i;
-
-  printf("\nTurn: %i\n", map->turnCount);
-  for (i = 0; i < 4; i++) {
-    printf("-----------------\n| %c | %c | %c | %c |\n", map->pos[i][0], map->pos[i][1], 
-      map->pos[i][2], map->pos[i][3]);
-  }
-  printf("-----------------\n");
-} // end printMap()
-
 // MapHasGold()
 // Description: Check if there is gold available in the map
 bool MapHasGold(struct Workspace *map) {
-  return (map->n_gold != 0);
+  return (map->n_gold > 0);
 } // end MapHasGold()
 
 
@@ -173,43 +163,13 @@ bool MapHasGold(struct Workspace *map) {
 void randomMove(int* x, int* y)
 {
   *x = getRandom(-1,1);
-  *y = getRandom(-1,1); 
+  *y = getRandom(-1,1);
+
+  printf("x = %d", *x);
+  printf("y = %d", *y);
+ 
 } // end randomMove()
 
-// hasGold()
-// Description: Check if Robot Stumble Upon Gold
-bool hasGold(struct Workspace *map) {
-  printf("Checking if there is still gold present in the map.\n"); // For debugging
-  
-  int pos_x = map->wall_e.pos_x;
-  int pos_y = map->wall_e.pos_y;
-
-  if (map->pos[pos_x][pos_y] == 'G') {
-    return true;
-  } else {
-    return false;
-  }
-
-} // end hasGold()
-
-// getGold()
-// Description: Pick up the gold
-void getGold(struct Workspace *map) {
-  int pos_x = map->wall_e.pos_x;
-  int pos_y = map->wall_e.pos_y;
-
-  printf("Picking up gold\n"); // For debugging
-  if(map->gb1.pos_x == pos_x && map->gb1.pos_y == pos_y){
-    map->gb1.available = false;
-  }
-  else{
-    map->gb2.available = false;
-  }
-  map->n_gold--;
-
-} // end getGold()
-
-// hasBomb()
 // Description: Check if the square has bomb in it
 bool hasBomb(struct Workspace *map, int x, int y) {
   bool bmb = false;
@@ -235,17 +195,8 @@ bool isValidMove(struct Workspace *map, int x, int y)
   return valid;
 }
 
-// moveNext()
-// Description: Move robot to next square
-void moveNext(struct Workspace *map, int x, int y) {
-  map->wall_e.pos_x = x;
-  map->wall_e.pos_y = y;
 
-  if(hasGold(map)){getGold(map);}
-
-} // end moveNext()
-
-// Check next Squareompare/master...master?expand=1
+// checkNextSquare()
 // Description: Check next square for possible movement
 void checkNextSquare(struct Workspace *map) {
 
@@ -259,16 +210,60 @@ void checkNextSquare(struct Workspace *map) {
 	//generate a random direction
 	randomMove(&x,&y);
 
+
 	//if the move is valid then break out of loop
         if (isValidMove(map,x,y)) {break;}
         //if (test) {break;} //should be commented out when ifValidMove() is working
-  }
+
+        }
 	
-  // Take the random move
-  moveNext(map, x, y);
 
-} // end checkNextSquare
+  //if a valid move is found then to next square
+   printf("Robot was at (%d,%d)\n", map->wall_e.pos_x, map->wall_e.pos_y);
+   moveNext(map, x, y);
 
+   printf("Robot is now at (%d,%d)\n", map->wall_e.pos_x, map->wall_e.pos_y);
+  
+} // end checkNextSquare()
+
+// moveNext()
+// Description: Move robot to next square
+void moveNext(struct Workspace *map,const int x,const int y) {
+	map->wall_e.pos_x = map->wall_e.pos_x + x;
+	map->wall_e.pos_y = map->wall_e.pos_y + y;
+} // end moveNext()
+
+// hasGold()
+// Description: Check if Robot Stumble Upon Gold
+bool hasGold(struct Workspace *map) {
+  printf("Checking if gold is encountered.\n"); // For debugging
+  
+  updateWorkspace(map);
+  int pos_x = map->wall_e.pos_x;
+  int pos_y = map->wall_e.pos_y;
+
+  if ((map->gb1.pos_x == pos_x) && (map->gb1.pos_y == pos_y) && map->gb1.available){
+    printf("Found gold!\n");
+    return 1;
+  }
+  if ((map->gb2.pos_x == pos_x) && (map->gb2.pos_y == pos_y) && map->gb2.available){
+    printf("Found gold!\n");
+    return 1;
+  }
+
+  printf("Gold not found.\n");
+  return 0; 
+} // end hasGold()
+
+// getGold()
+// Description: Pick up the gold
+void getGold(struct Workspace *map) {
+  printf("Picking up gold\n"); // For debugging
+
+  if((map->gb1.pos_x == map->wall_e.pos_x) && (map->gb1.pos_y == map->wall_e.pos_y) && map->gb1.available) { map->gb1.available = false; map->n_gold--; map->wall_e.n_goldcollected++;}
+
+  if((map->gb1.pos_x == map->wall_e.pos_x) && (map->gb1.pos_y == map->wall_e.pos_y) && map->gb2.available) { map->gb1.available = false; map->n_gold--; map->wall_e.n_goldcollected++;} 
+} // end getGold()
 
 // Run4Gold()
 // Description: Start the sequence for the Robot to search for gold
@@ -280,11 +275,17 @@ void Run4Gold(struct Workspace *map) {
     // debug message, should be commented out if not needed
     if (test) {printf("There is still gold in the map!\nChecking next square.\n");}
 
-    // start sequence to examine next square
+    // start sequence to examine next square and move    
     checkNextSquare(map);
     updateWorkspace(map);
     printMap(map);
 
+    if (hasGold(map))
+	{
+	   getGold(map);
+	}
+
+    printMap(map);
     // created to break out of the loop when debugging
     if (test) { break;}
   }
@@ -295,6 +296,46 @@ void Run4Gold(struct Workspace *map) {
 
 } // end Run4Gold()
 
+// printMap()
+// Description: Output the map in a readable format to the console
+void printMap(struct Workspace *map) {
+  
+  updateWorkspace(map);
+  int i;
+
+  for (i = 0; i < 4; i++) {
+    printf("------------------------\n| %c | %c | %c | %c |\n", map->pos[0][i],
+           map->pos[1][i], map->pos[2][i], map->pos[3][i]);
+  }
+  printf("------------------------\n");
+} // end printMap()
+
+
+//init2Fix()
+void init2Fix(struct Workspace* map)
+{
+  map->n_gold = 2;
+
+  map->wall_e.pos_x = 0;
+  map->wall_e.pos_y = 0;
+  map->wall_e.n_goldcollected = 0;
+
+  map->gb1.pos_x = 3;
+  map->gb1.pos_y = 0;
+  map->gb1.available = true;
+
+  map->gb2.pos_x = 2;
+  map->gb2.pos_y = 3;
+  map->gb2.available = true;
+
+  map->bmb.pos_x = 0;
+  map->bmb.pos_y = 3;
+
+}
+ 
+
+
+
 
 /**************************END FUNCTIONS******************************/
 
@@ -304,11 +345,48 @@ int main() {
   struct Workspace map;
 
   // Initialize all struct variables
-  createWorld(&map);
+  // createWorld(&map);
+  init2Fix(&map);
+  printMap(&map);
+  
+  printf("Moving right by 1 unit\n");
+  moveNext(&map, 1, 0);
   printMap(&map);
 
+  printf("Moving right by 1 unit\n");
+  moveNext(&map, 1, 0);
+  printMap(&map);
 
-  Run4Gold(&map);
+  hasGold(&map);
+
+  printf("Moving right by 1 unit\n");
+  moveNext(&map, 1, 0);
+  hasGold(&map);
+  printMap(&map);
+
+  printf("Moving down by 1 unit\n");
+  moveNext(&map, 0, 1);
+  hasGold(&map);
+  printMap(&map);
+  
+  printf("Moving up by 1 unit\n");
+  moveNext(&map, 0, -1);
+  if (hasGold(&map))
+  {getGold(&map);}
+  printMap(&map);
+  
+  printf("Moving down by 1 unit\n");
+  moveNext(&map, 0, 1);
+  hasGold(&map);
+  printMap(&map);
+  
+  printf("Moving up by 1 unit\n");
+  moveNext(&map, 0, -1);
+  if (hasGold(&map))
+  {getGold(&map);}
+  printMap(&map);
+
+ // Run4Gold(&map);
 
   return 0;
 }
