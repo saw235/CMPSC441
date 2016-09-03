@@ -85,6 +85,7 @@ void randPos(struct Workspace *map) {
 
   x = place[2] / 4;
   y = place[2] % 4;
+  map->gb1.pos_x = x;
   map->gb1.pos_y = y;
   map->pos[x][y] = 'G';
 
@@ -164,6 +165,7 @@ void printMap(struct Workspace *map) {
 // MapHasGold()
 // Description: Check if there is gold available in the map
 bool MapHasGold(struct Workspace *map) {
+  printf("Checking if there is gold on the map");
   return (map->n_gold != 0);
 } // end MapHasGold()
 
@@ -179,12 +181,13 @@ void randomMove(int* x, int* y)
 // hasGold()
 // Description: Check if Robot Stumble Upon Gold
 bool hasGold(struct Workspace *map) {
-  printf("Checking if there is still gold present in the map.\n"); // For debugging
+  printf("Checking if on gold.\n"); // For debugging
   
   int pos_x = map->wall_e.pos_x;
   int pos_y = map->wall_e.pos_y;
 
   if (map->pos[pos_x][pos_y] == 'G') {
+    printf("Found Gold");
     return true;
   } else {
     return false;
@@ -199,12 +202,14 @@ void getGold(struct Workspace *map) {
   int pos_y = map->wall_e.pos_y;
 
   printf("Picking up gold\n"); // For debugging
+  // Checking if on the first gold bar
   if(map->gb1.pos_x == pos_x && map->gb1.pos_y == pos_y){
     map->gb1.available = false;
   }
   else{
     map->gb2.available = false;
   }
+  // Updating gold counter
   map->n_gold--;
 
 } // end getGold()
@@ -250,7 +255,7 @@ void moveNext(struct Workspace *map, int x, int y) {
 void checkNextSquare(struct Workspace *map) {
 
   //Possible move range for x and y are -1 to 1
-  int x , y = 0;
+  int x = 0, y = 0;
   
 
   //keep checking for possible move until we found one
@@ -260,7 +265,7 @@ void checkNextSquare(struct Workspace *map) {
 	randomMove(&x,&y);
 
 	//if the move is valid then break out of loop
-        if (isValidMove(map,x,y)) {break;}
+        if (isValidMove(map, x, y)) {break;}
         //if (test) {break;} //should be commented out when ifValidMove() is working
   }
 	
