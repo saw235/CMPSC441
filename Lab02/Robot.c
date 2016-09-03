@@ -52,6 +52,7 @@ void getGold(struct Workspace *map);
 void Run4Gold(struct Workspace *map);
 void printMap(struct Workspace *map);
 void init(struct Workspace *map);
+void robotAPI(struct Workspace *map);
 
 // end Forward Declaration
 
@@ -367,16 +368,21 @@ void init(struct Workspace *map) {
 
 /**************************END FUNCTIONS******************************/
 
-int main() {
-  // API();
+/*******************************API***********************************/
+void robotAPI(struct Workspace *map){
+  createWorld(map);
+  printMap(map);
+  
+  Run4Gold(map);
 
+}
+
+int main() {
+  
   struct Workspace map;
 
-  // Initialize all struct variables
-  createWorld(&map);
-  printMap(&map);
-
-  Run4Gold(&map);
+  // API Call
+  robotAPI(&map);
 
   printf("\nExiting program...\n");
 
