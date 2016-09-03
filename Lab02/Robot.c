@@ -272,7 +272,7 @@ void getGold(struct Workspace *map) {
 
   if((map->gb1.pos_x == map->wall_e.pos_x) && (map->gb1.pos_y == map->wall_e.pos_y) && map->gb1.available) { map->gb1.available = false; map->n_gold--; map->wall_e.n_goldcollected++;}
 
-  if((map->gb1.pos_x == map->wall_e.pos_x) && (map->gb1.pos_y == map->wall_e.pos_y) && map->gb2.available) { map->gb2.available = false; map->n_gold--; map->wall_e.n_goldcollected++;} 
+  if((map->gb2.pos_x == map->wall_e.pos_x) && (map->gb2.pos_y == map->wall_e.pos_y) && map->gb2.available) { map->gb2.available = false; map->n_gold--; map->wall_e.n_goldcollected++;} 
 } // end getGold()
 
 // Run4Gold()
@@ -298,8 +298,6 @@ void Run4Gold(struct Workspace *map) {
     //if (test) { break;}
   }
 
-
-  printMap(map);
   // end if no gold
   printf("There is no more gold in the map.\n");
   return;
@@ -351,7 +349,6 @@ void init(struct Workspace* map)
 
 
 
-
 /**************************END FUNCTIONS******************************/
 
 int main() {
@@ -364,19 +361,8 @@ int main() {
   printMap(&map);
 
   Run4Gold(&map);
-  // int x, y = 0;
-  
-  /*
-  while(true){
-  randomMove(&x,&y);
 
-  if(isValidMove(&map,x,y)) {break;}
-  }
 
-  moveNext(&map,x,y);
-  printMap(&map);*/
-
- // for (int i = 0; i < 10; i++) { printf("\n %d \n", getRandom(-1,1));}
 
   return 0;
 }
