@@ -17,8 +17,8 @@ void Input(struct data_clone warrior[], int n_clone);
 void AskId(struct data_clone* clone);
 void AskName(struct data_clone* clone);
 void AskTimeCounter(struct data_clone* clone);
-void ClockDec(struct data_clone clone);
-bool LifeCheck(struct data_clone clone);
+void ClockDec(struct data_clone* clone);
+bool LifeCheck(struct data_clone* clone);
 void Print();
 void LifeSpan();
 void SWAPI(void);
@@ -143,7 +143,7 @@ void SWAPI(void){
   Input(warrior, n_clone);
 
   //Begin lifespan countdown
-  //LifeSpan();
+  LifeSpan(warrior, n_clone);
 
   //Deallocate when exiting
   free(warrior);
