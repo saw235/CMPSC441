@@ -8,14 +8,14 @@
 // Structs
 struct data_clone{
   int ID, timeCounter;
-  char* name[25];
+  char name[25];
 };
 
 // Function Header
 int CreateClone(struct data_clone* warrior);
 void Input();
-void ClockDec(struct data_clone clone);
-bool LifeCheck(struct data_clone clone);
+void ClockDec(struct data_clone *clone);
+bool LifeCheck(struct data_clone *clone);
 void Print();
 void LifeSpan();
 void SWAPI(void);
@@ -70,16 +70,16 @@ void LifeSpan(struct data_clone *clone, int n_clone){ //-- Corey
     printf("Time: %i\n", clock);
     if(alive != 0){	// Make sure all the clones are not dead
       for(int i = 0; i < n_clone; i++){
-        if(!LifeCheck(clone[i]){	// Check if they are dead
+        if(!LifeCheck(&clone[i])){	// Check if they are dead
           alive--;	// decrement the number of alive clones
         }
         else{
-          ClockDec(clone[i]);	// decrement life clock
-          if(!LifeCheck(clone[i]){ // if they died now
+          ClockDec(&clone[i]);	// decrement life clock
+          if(!LifeCheck(&clone[i])){ // if they died now
             alive--;  // decrement again
           }
         }
-        Print(clone[i], alive);	// Print out the clone
+        Print(&clone[i], alive);	// Print out the clone
       }
     }
     clock++;	// Increment the time clock
@@ -97,7 +97,7 @@ void SWAPI(void){
   int n_clone = CreateClone(warrior);
 
   //Begin lifespan countdown
-  LifeSpan();
+  //LifeSpan();
 
 
   //Deallocate when exiting
