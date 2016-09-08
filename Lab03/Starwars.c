@@ -41,20 +41,20 @@ void Input(){
 
 }
 
-void ClockDec(struct data_clone clone){
-  clone.timeCounter--;
+void ClockDec(struct data_clone *clone){  // -- Corey
+  clone->timeCounter--;
 }
 
-bool LifeCheck(struct data_clone clone){
-  return clone.timeCounter > 0;
+bool LifeCheck(struct data_clone *clone){  // -- Corey
+  return clone->timeCounter > 0;
 }
 
-void Print(){
-
+void Print(struct data_clone *clone){  // -- Corey
+  
 }
 
-void LifeSpan(){
-
+void LifeSpan(struct data_clone *clone, int n_clone){ //-- Corey
+  int clock = 0, dead = 0;
 }
 
 // API
@@ -78,10 +78,14 @@ void SWAPI(void){
 
 int main(){
   // API Call
+<<<<<<< HEAD
   
   struct data_clone* warrior;
   int n_clone = CreateClone(warrior);
   
   free(warrior);
+=======
+  SWAPI();
+>>>>>>> 7a852945eeeb56002e350e0d7b7a8ea4394eafac
   return 0;
 }
