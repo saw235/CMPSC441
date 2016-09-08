@@ -13,18 +13,12 @@ struct data_clone{
 
 // Function Header
 int CreateClone(struct data_clone* warrior);
-<<<<<<< HEAD
 void Input(struct data_clone warrior[], int n_clone);
 void AskId(struct data_clone* clone);
 void AskName(struct data_clone* clone);
 void AskTimeCounter(struct data_clone* clone);
 void ClockDec(struct data_clone clone);
 bool LifeCheck(struct data_clone clone);
-=======
-void Input();
-void ClockDec(struct data_clone *clone);
-bool LifeCheck(struct data_clone *clone);
->>>>>>> cffccabaf987ad202fe5ae4db548477fa94690ec
 void Print();
 void LifeSpan();
 void SWAPI(void);
