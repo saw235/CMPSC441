@@ -1,3 +1,7 @@
+//Author: Saw Xue Zheng and Corey Zalewski
+//Date  : 8 September 2016
+//Description : Robot Simulator
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
