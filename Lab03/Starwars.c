@@ -8,12 +8,15 @@
 // Structs
 struct data_clone{
   int ID, timeCounter;
-  char* name[25];
+  char name[25];
 };
 
 // Function Header
 int CreateClone(struct data_clone* warrior);
-void Input();
+void Input(struct data_clone warrior[], int n_clone);
+void AskId(struct data_clone* clone);
+void AskName(struct data_clone* clone);
+void AskTimeCounter(struct data_clone* clone);
 void ClockDec(struct data_clone clone);
 bool LifeCheck(struct data_clone clone);
 void Print();
@@ -35,11 +38,51 @@ int CreateClone(struct data_clone* warrior){
   warrior = (struct data_clone*) malloc(n_clone*sizeof(struct data_clone));
 
   return n_clone;
-}
+} //end CreateClone
 
-void Input(){
+//Description: Ask user for the information of clones
+void Input(struct data_clone warrior[], int n_clone){
 
-}
+   for(int i = 0; i < n_clone; i++)
+	{
+		printf("Getting information for clone[%d]",i);
+		AskId(&warrior[i]);
+		AskName(&warrior[i]);
+		AskTimeCounter(&warrior[i]);
+	}
+}//end Input
+
+
+//Description: Ask for ID of clone
+void AskId(struct data_clone* clone){
+  
+  printf("Please input the clone id: "); 
+  scanf("%d", &clone->ID);
+
+  printf("Clone id is %d", clone->ID);//debug message
+
+
+}//end AskId
+
+//Description: Ask for Name of clone
+void AskName(struct data_clone* clone){
+  printf("Please input the clone name: "); 
+  scanf("%s", clone->name);
+
+  printf("Clone id is %s", clone->name); 
+
+}//end Askname
+
+
+//Description: Ask for time counter of clone
+void AskTimeCounter(struct data_clone* clone){
+  printf("Please input the time counter: "); 
+  scanf("%d", &clone->timeCounter);
+
+  printf("Clone timeCounter is %d", clone->timeCounter);//debug message 
+
+}//end AskTimeCounter
+
 
 void ClockDec(struct data_clone *clone){  // -- Corey
   clone->timeCounter--;
@@ -67,9 +110,11 @@ void SWAPI(void){
   //Create some clones
   int n_clone = CreateClone(warrior);
 
+  //Ask user for clone's info
+  Input(warrior, n_clone);
+
   //Begin lifespan countdown
   LifeSpan();
-
 
   //Deallocate when exiting
   free(warrior);
@@ -77,7 +122,8 @@ void SWAPI(void){
 }
 
 int main(){
-  // API Call
+  // API
   //SWAPI();
+  
   return 0;
 }
