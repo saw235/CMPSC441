@@ -12,8 +12,9 @@ struct data_clone{
 };
 
 // Function Header
-int CreateClone(struct data_clone* warrior);
-void Input(struct data_clone warrior[], int n_clone);
+int CreateClone(struct data_clone** warrior);
+void InitClone(struct data_clone* clone, int ID, char* name, int timeCounter);
+void Input(struct data_clone** warrior, int n_clone);
 void AskId(struct data_clone* clone);
 void AskName(struct data_clone* clone);
 void AskTimeCounter(struct data_clone* clone);
@@ -27,7 +28,7 @@ void SWAPI(void);
 
 
 //Description: Ask user to create a number of clones and input the details of the clones
-int CreateClone(struct data_clone* warrior){
+int CreateClone(struct data_clone** warrior){
 
   int n_clone = 0;
 
@@ -35,20 +36,44 @@ int CreateClone(struct data_clone* warrior){
   scanf("%d", &n_clone);
 
   printf("Spawning %d clones...\n", n_clone);
-  warrior = (struct data_clone*) malloc(n_clone*sizeof(struct data_clone));
+  //points array to allocated memory
+  *warrior = malloc(n_clone*sizeof(struct data_clone));
+
+  if (warrior == NULL) { printf("Does not have enough memory for allocation. Exiting program\n"); exit(0);}
+
 
   return n_clone;
 } //end CreateClone
 
-//Description: Ask user for the information of clones
-void Input(struct data_clone warrior[], int n_clone){
+
+
+//Description: Initialize clone with ID, Name and TimeCounter
+void InitClone(struct data_clone* clone, int ID, char* name, int timeCounter)
+{
+  clone->ID = ID;
+  strcpy(clone->name, name);
+  clone->timeCounter = timeCounter;
+}
+
+
+
+//Description: Ask user for the information of clones and Initialize them
+void Input(struct data_clone** warrior, int n_clone){
 
    for(int i = 0; i < n_clone; i++)
 	{
-		printf("Getting information for clone[%d]",i);
+		printf("Getting information for clone[%d]\n",i);
+		
+		/*
 		AskId(&warrior[i]);
 		AskName(&warrior[i]);
 		AskTimeCounter(&warrior[i]);
+		*/
+
+		InitClone(&warrior[i],i, "Derp",5+(5*i) );
+                printf("\n----Clone Information----\n");
+		Print(&warrior[i], n_clone);
+		printf("\n\n");
 	}
 }//end Input
 
@@ -57,9 +82,9 @@ void Input(struct data_clone warrior[], int n_clone){
 void AskId(struct data_clone* clone){
   
   printf("Please input the clone id: "); 
-  scanf("%d", &clone->ID);
+  scanf("%i", &clone->ID);
 
-  printf("Clone id is %d", clone->ID);//debug message
+  printf("Clone id is %i\n", clone->ID);//debug message
 
 
 }//end AskId
@@ -69,7 +94,7 @@ void AskName(struct data_clone* clone){
   printf("Please input the clone name: "); 
   scanf("%s", clone->name);
 
-  printf("Clone id is %s", clone->name); 
+  printf("Clone name is %s\n", clone->name); 
 
 }//end Askname
 
@@ -79,7 +104,7 @@ void AskTimeCounter(struct data_clone* clone){
   printf("Please input the time counter: "); 
   scanf("%d", &clone->timeCounter);
 
-  printf("Clone timeCounter is %d", clone->timeCounter);//debug message 
+  printf("Clone timeCounter is %d\n", clone->timeCounter);//debug message 
 
 }//end AskTimeCounter
 
@@ -94,7 +119,7 @@ bool LifeCheck(struct data_clone *clone){  // -- Corey
 
 void Print(struct data_clone *clone, int alive){  // -- Corey
   if(alive == 0){
-    printf("All clones are dead");
+    printf("All clones are dead.\n");
   }
   else{
     printf("ID: %i\nName: %s\nTime Counter: %i\n", clone->ID, clone->name, clone->timeCounter);
@@ -137,13 +162,13 @@ void SWAPI(void){
   struct data_clone* warrior;
 
   //Create some clones
-  int n_clone = CreateClone(warrior);
+  int n_clone = CreateClone(&warrior);
 
   //Ask user for clone's info
-  Input(warrior, n_clone);
+  Input(warrior, n_clone);  //Right now is just initializing everythint to 'Derp'
 
   //Begin lifespan countdown
-  LifeSpan(warrior, n_clone);
+  //LifeSpan(warrior, n_clone);
 
   //Deallocate when exiting
   free(warrior);
@@ -152,7 +177,7 @@ void SWAPI(void){
 
 int main(){
   // API
-  //SWAPI();
-  
+  SWAPI();
+
   return 0;
 }
