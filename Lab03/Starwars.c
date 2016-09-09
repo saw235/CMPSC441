@@ -4,16 +4,31 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
+
+
+//Defines
+#define N_NAMES 20
+#define TIMECOUNTER_MAX 25
+#define TIMECOUNTER_MIN 5
+
+//Globals
+//list of 20 names for randomize selections
+ const char* names[N_NAMES] =  {"Bacon", "Lorea\'l", "Pikaman", "Digiman", "Le\'Guy", "Dude", "Stormtrooper", 
+                            "Obi_1_Kenovi","Darth Maul", "Dr. C", "Goku", "Weldon", "DoubleLift", "Dr. Dre", "Proffessor Layton",
+                            "Megaman", "Brobama", "Michael Jefferson", "Cartman and your mom", "Pow pow"};
 
 // Structs
 struct data_clone{
-  int ID, timeCounter;
+  int id, timeCounter;
   char name[25];
 };
 
 // Function Header
+int getRandom(int rangeLow, int rangeHigh);
 int CreateClone(struct data_clone** warrior);
-void InitClone(struct data_clone* clone, int ID, char* name, int timeCounter);
+void InitClone(struct data_clone* clone, int id, char* name, int timeCounter);
+void RandomClone(struct data_clone* clone);
 void Input(struct data_clone** warrior, int n_clone);
 void AskId(struct data_clone* clone);
 void AskName(struct data_clone* clone);
@@ -24,7 +39,17 @@ void Print();
 void LifeSpan();
 void SWAPI(void);
 
-// Function Implementation
+//********************** Functions Implementation*******************************/
+
+
+// Description: Takes in two ranges and return a random number between that.
+int getRandom(int rangeLow, int rangeHigh) {
+  double myRand = rand() / (1.0 + RAND_MAX);
+  int range = rangeHigh - rangeLow + 1;
+  int myRand_scaled = (myRand * range) + rangeLow;
+  return myRand_scaled;
+} // end getRandom()
+
 
 
 //Description: Ask user to create a number of clones and input the details of the clones
@@ -46,16 +71,29 @@ int CreateClone(struct data_clone** warrior){
 } //end CreateClone
 
 
-
 //Description: Initialize clone with ID, Name and TimeCounter
-void InitClone(struct data_clone* clone, int ID, char* name, int timeCounter)
+void InitClone(struct data_clone* clone, int id, char* name, int timeCounter)
 {
-  clone->ID = ID;
+  clone->id = id;
   strcpy(clone->name, name);
   clone->timeCounter = timeCounter;
 }
 
 
+//Decription: Randomly initialize clones with different settings
+
+void RandomClone(struct data_clone* clone)
+{
+     //randomize ID
+     int id = getRandom(0,99999);
+     //randomize timecounter to between 5 to 25
+     int timeCounter = getRandom(TIMECOUNTER_MIN, TIMECOUNTER_MAX);
+     //randomize a name
+     char* name = names[getRandom(0,N_NAMES-1)];
+
+     InitClone(clone, id, name, timeCounter);
+
+}
 
 //Description: Ask user for the information of clones and Initialize them
 void Input(struct data_clone** warrior, int n_clone){
@@ -70,7 +108,8 @@ void Input(struct data_clone** warrior, int n_clone){
 		AskTimeCounter(&warrior[i]);
 		*/
 
-		InitClone(&warrior[i],i, "Derp",5+(5*i) );
+		//InitClone(&warrior[i],i, "Derp",5+(5*i) );
+		RandomClone(&warrior[i]);
                 printf("\n----Clone Information----\n");
 		Print(&warrior[i], n_clone);
 		printf("\n\n");
@@ -82,9 +121,9 @@ void Input(struct data_clone** warrior, int n_clone){
 void AskId(struct data_clone* clone){
   
   printf("Please input the clone id: "); 
-  scanf("%i", &clone->ID);
+  scanf("%i", &clone->id);
 
-  printf("Clone id is %i\n", clone->ID);//debug message
+  printf("Clone id is %i\n", clone->id);//debug message
 
 
 }//end AskId
@@ -122,7 +161,7 @@ void Print(struct data_clone *clone, int alive){  // -- Corey
     printf("All clones are dead.\n");
   }
   else{
-    printf("ID: %i\nName: %s\nTime Counter: %i\n", clone->ID, clone->name, clone->timeCounter);
+    printf("ID: %d\nName: %s\nTime Counter: %d\n", clone->id, clone->name, clone->timeCounter);
     if(LifeCheck(clone)){
       printf("Clone is alive\n");
     }
