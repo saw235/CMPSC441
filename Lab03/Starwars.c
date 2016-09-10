@@ -29,6 +29,7 @@ int getRandom(int rangeLow, int rangeHigh);
 int CreateClone(struct data_clone** warrior);
 void InitClone(struct data_clone* clone, int id, char* name, int timeCounter);
 void RandomClone(struct data_clone* clone);
+void RandomCloneInit(struct data_clone** warrior, int n_clone);
 void Input(struct data_clone** warrior, int n_clone);
 void AskId(struct data_clone* clone);
 void AskName(struct data_clone* clone);
@@ -80,8 +81,7 @@ void InitClone(struct data_clone* clone, int id, char* name, int timeCounter)
 }
 
 
-//Decription: Randomly initialize clones with different settings
-
+//Decription: Randomly initialize a clone with different settings
 void RandomClone(struct data_clone* clone)
 {
      //randomize ID
@@ -95,21 +95,31 @@ void RandomClone(struct data_clone* clone)
 
 }
 
+//Decription: Initialize an array of data_clones with randoms
+void RandomCloneInit(struct data_clone** warrior, int n_clone)
+{
+	for(int i = 0; i < n_clone; i++)
+	{
+		printf("Initializing clone with randoms.\n");
+		RandomClone(&warrior[i]);
+
+		printf("\n----Clone Information----\n");
+                Print(&warrior[i], n_clone);
+                printf("\n\n");
+
+	}
+}
+
 //Description: Ask user for the information of clones and Initialize them
 void Input(struct data_clone** warrior, int n_clone){
 
    for(int i = 0; i < n_clone; i++)
 	{
 		printf("Getting information for clone[%d]\n",i);
-		
-		/*
 		AskId(&warrior[i]);
 		AskName(&warrior[i]);
 		AskTimeCounter(&warrior[i]);
-		*/
 
-		//InitClone(&warrior[i],i, "Derp",5+(5*i) );
-		RandomClone(&warrior[i]);
                 printf("\n----Clone Information----\n");
 		Print(&warrior[i], n_clone);
 		printf("\n\n");
@@ -203,8 +213,12 @@ void SWAPI(void){
   //Create some clones
   int n_clone = CreateClone(&warrior);
 
+
+  RandomCloneInit(warrior, n_clone);
+
   //Ask user for clone's info
-  Input(warrior, n_clone);  //Right now is just initializing everythint to 'Derp'
+  //Input(warrior, n_clone);
+
 
   //Begin lifespan countdown
   //LifeSpan(warrior, n_clone);
