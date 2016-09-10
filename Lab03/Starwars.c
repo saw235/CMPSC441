@@ -9,8 +9,8 @@
 
 //Defines
 #define N_NAMES 20
-#define TIMECOUNTER_MAX 25
-#define TIMECOUNTER_MIN 5
+#define TIMECOUNTER_MAX 5
+#define TIMECOUNTER_MIN 1
 
 //Globals
 //list of 20 names for randomize selections
@@ -35,9 +35,9 @@ void AskId(struct data_clone* clone);
 void AskName(struct data_clone* clone);
 void AskTimeCounter(struct data_clone* clone);
 void ClockDec(struct data_clone* clone);
-bool LifeCheck(struct data_clone* clone);
-void Print();
-void LifeSpan();
+bool IsAlive(struct data_clone* clone);
+void Print(struct data_clone *clone);
+void LifeSpan(struct data_clone *clone, int n_clone);
 void SWAPI(void);
 
 //********************** Functions Implementation*******************************/
@@ -104,7 +104,7 @@ void RandomCloneInit(struct data_clone** warrior, int n_clone)
 		RandomClone(&warrior[i]);
 
 		printf("\n----Clone Information----\n");
-                Print(&warrior[i], n_clone);
+                Print(&warrior[i]);
                 printf("\n\n");
 
 	}
@@ -121,7 +121,7 @@ void Input(struct data_clone** warrior, int n_clone){
 		AskTimeCounter(&warrior[i]);
 
                 printf("\n----Clone Information----\n");
-		Print(&warrior[i], n_clone);
+		Print(&warrior[i]);
 		printf("\n\n");
 	}
 }//end Input
@@ -162,45 +162,56 @@ void ClockDec(struct data_clone *clone){  // -- Corey
   clone->timeCounter--;
 }
 
-bool LifeCheck(struct data_clone *clone){  // -- Corey
+
+//Description: Returns true if clone not dead, return false otherwise.
+bool IsAlive(struct data_clone *clone){  // -- Corey
   return clone->timeCounter > 0;
 }
 
-void Print(struct data_clone *clone, int alive){  // -- Corey
-  if(alive == 0){
-    printf("All clones are dead.\n");
-  }
-  else{
+void Print(struct data_clone *clone){  // -- Corey
+
+    char buf;
     printf("ID: %d\nName: %s\nTime Counter: %d\n", clone->id, clone->name, clone->timeCounter);
-    if(LifeCheck(clone)){
+    if(IsAlive(clone)){
       printf("Clone is alive\n");
     }
     else{
       printf("Clone is DEAD!!!\n");
+      scanf("%c", &buf);
     }
-  }
 }
 
 void LifeSpan(struct data_clone *clone, int n_clone){ //-- Corey
+  
+  printf("*****Starting lifespan of clones****\n");
   int clock = 0, alive = n_clone;
   do{
-    printf("Time: %i\n", clock);
-    if(alive != 0){	// Make sure all the clones are not dead
-      for(int i = 0; i < n_clone; i++){
-        if(!LifeCheck(&clone[i])){	// Check if they are dead
-          alive--;	// decrement the number of alive clones
+
+    for(int i = 0; i < n_clone; i++){
+        if(!IsAlive(&clone[i])){	// Check if they are already dead, if already dead, skip
+          continue;
         }
-        else{
+        else{ //else the clone is alive
           ClockDec(&clone[i]);	// decrement life clock
-          if(!LifeCheck(&clone[i])){ // if they died now
-            alive--;  // decrement again
+          if(!IsAlive(&clone[i])){ // if they died now
+            alive--;  // decrement the number of clones alive
           }
         }
-        Print(&clone[i], alive);	// Print out the clone
+	
+	printf("\n--Time: %i--\n", clock);
+	printf("--Alive: %i--\n", alive);
+
+        Print(&clone[i]); // Print out the clone
       }
-    }
+    
     clock++;	// Increment the time clock
   }while(alive != 0);
+
+
+  printf("\n--Time: %i--\n", clock);
+  printf("--Alive: %i--\n", alive);
+
+  printf("All clones are dead!\n");
 }
 
 // API
@@ -221,7 +232,7 @@ void SWAPI(void){
 
 
   //Begin lifespan countdown
-  //LifeSpan(warrior, n_clone);
+  LifeSpan(warrior, n_clone);
 
   //Deallocate when exiting
   free(warrior);
