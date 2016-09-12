@@ -1,11 +1,12 @@
 # CMPSC441<br />
+Assignments done for Operating Systems Class
 
 |Folder Name| Description 
 |-----------| -----------
 |Lab02| Robot program that searches for Golds in the Map
 |Lab03| Simulates the lifespans of clones in STARWARS. Test the capabilities of malloc
 
-Assignments done for Operating Systems Class
+
 <br />
 <br />
 
