@@ -1,7 +1,14 @@
 # CMPSC441<br />
+
+|Folder Name| Description 
+|-----------| -----------
+|Lab02| Robot program that searches for Golds in the Map
+|Lab03| Simulates the lifespans of clones in STARWARS. Test the capabilities of malloc
+
 Assignments done for Operating Systems Class
 <br />
 <br />
+
 Guidelines to all collaborators:<br />
 1) Coding styles should follow closely to Lab02.<br />
 2) Communication is key when merging. Notify collaborators before doing a merge when a merge conflict arise!<br />
