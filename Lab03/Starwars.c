@@ -18,7 +18,7 @@
                             "Obi_1_Kenovi","Darth Maul", "Dr. C", "Goku", "Weldon", "DoubleLift", "Dr. Dre", "Proffessor Layton",
                             "Megaman", "Brobama", "Michael Jefferson", "Cartman and your mom", "Pow pow"};
 
- bool RANDOM = true; //set to false if want user input
+ bool RANDOM = false; //set to false if want user input
 
 
 // Structs
@@ -120,7 +120,7 @@ void Input(struct data_clone* warrior, int n_clone){
 
    for(int i = 0; i < n_clone; i++)
 	{
-		printf("Getting information for clone[%d]\n",i);
+		printf("\nGetting information for clone[%d]\n",i);
 		AskId(&warrior[i]);
 		AskName(&warrior[i]);
 		AskTimeCounter(&warrior[i]);
