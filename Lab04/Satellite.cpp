@@ -16,7 +16,7 @@ struct data_country{
   int activated;
   int canTake;
   int selectedPack;
-};
+}country[5];
 
 struct data_queue{
   int country;
