@@ -43,7 +43,9 @@ struct Workspace {
 };
 
 struct thread_data{
-  int thread_id;
+  pthread_t thread_id;
+  int thread_num;
+  int condition;
   struct Workspace* map;
 }thread_data_array[NUM_THREADS] = {{0, NULL},{1, NULL}};
 
@@ -206,7 +208,8 @@ void startAPI(){
   thread_data_array[0].map = &map;
   thread_data_array[1].map = &map;
   
-
+  pthread_create(&(thread_data_array[0].thread_id), NULL, robotAPI, (void *)(&thread_data_array[0]));
+  pthread_create(&(thread_data_array[1].thread_id), NULL, bombAPI, (void *)(&thread_data_array[1]));
 
 }
 
