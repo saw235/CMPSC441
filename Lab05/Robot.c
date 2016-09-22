@@ -6,9 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <pthread.h>
 
 const bool test = false; // set this to true when debugging to avoid infinite
                         // loop from unfinished code
+#define NUM_THREADS 2
 
 // Struct deifinitions
 struct Robot {
@@ -40,6 +42,10 @@ struct Workspace {
   struct Bomb bmb;
 };
 
+struct thread_data{
+  int thread_id;
+}thread_data_array[NUM_THREADS] = {{0},{1}};
+
 // Forward Declaration
 int getRandom(int rangeLow, int rangeHigh);
 void randPos(struct Workspace *map);
@@ -55,8 +61,11 @@ bool hasGold(struct Workspace *map);
 void getGold(struct Workspace *map);
 void Run4Gold(struct Workspace *map);
 void printMap(struct Workspace *map);
+void run(struct Workspace *map, void *thread)
 void init(struct Workspace *map);
-void robotAPI(struct Workspace *map);
+void *bombAPI(struct Workspace *map, void*threadarg);
+void *robotAPI(struct Workspace *map, void *threadarg);
+void StartAPI();
 
 // end Forward Declaration
 
@@ -290,6 +299,7 @@ void getGold(struct Workspace *map) {
   printf("Gold retrieved!\n");
 } // end getGold()
 
+
 // Run4Gold()
 // Description: Start the sequence for the Robot to search for gold
 void Run4Gold(struct Workspace *map) {
@@ -356,22 +366,31 @@ void init(struct Workspace *map) {
 
 /**************************END FUNCTIONS******************************/
 
-/*******************************API***********************************/
-void robotAPI(struct Workspace *map){
-  init(map);
-  printMap(map);
+/*******************************API***********************************/// BombRun()
+// Description: Start the sequence for the robot to search for gold
+void *bombAPI(struct Workspace *map, void *threadarg)
+{
+
+}
+
+void *robotAPI(struct Workspace *map, void *threadarg){
   
   Run4Gold(map);
 
 }
+
+void StartAPI(){
+  struct Workspace map;
+  init(&map);
+  printMap(&map);
+  
+}
 /**************************END API***********************************/
 
 int main() {
-  
-  struct Workspace map;
 
   // API Call
-  robotAPI(&map);
+  startAPI();
 
   printf("\nExiting program...\n");
 
