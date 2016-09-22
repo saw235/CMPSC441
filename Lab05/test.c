@@ -48,6 +48,29 @@ struct thread_data{
 }thread_data_array[NUM_THREADS] = {{0, NULL},{1, NULL}};
 
 
+// Forward Declaration
+int getRandom(int rangeLow, int rangeHigh);
+void randPos(struct Workspace *map);
+void createWorld(struct Workspace *map);
+void updateWorkspace(struct Workspace *map);
+bool MapHasGold(struct Workspace *map);
+void randomMove(int *x, int *y);
+bool hasBomb(struct Workspace *map, int x, int y);
+bool isValidMove(struct Workspace *map, int x, int y);
+void checkNextSquare(struct Workspace *map);
+void moveNext(struct Workspace *map, const int x, const int y);
+bool hasGold(struct Workspace *map);
+void getGold(struct Workspace *map);
+void Run4Gold(struct Workspace *map);
+void printMap(struct Workspace *map);
+void init(struct Workspace *map);
+void *bombAPI(void*threadarg);
+void *robotAPI(void *threadarg);
+void run(void* threaddata);
+void StartAPI();
+
+// end Forward Declaration
+
 // getRandom()
 // Description: Takes in two ranges and return a random number between that.
 int getRandom(int rangeLow, int rangeHigh) {
