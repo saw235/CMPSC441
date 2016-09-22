@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1474213717 source:/home/xzsaw/Desktop/CMPSC441/Threads/Thread/Src/02_thread_pass_argument.c
+	<pthread.h>
+	<stdio.h>
+
+1474213720 source:/home/xzsaw/Desktop/CMPSC441/Threads/Thread/Src/03_thread_condition.c
+	<pthread.h>
+	<stdio.h>
+	<stdlib.h>
+
+1474214042 source:/home/xzsaw/Desktop/CMPSC441/Threads/Thread/Src/01_create_thread.c
+	<pthread.h>
+	<stdio.h>
+	<stdlib.h>
+
