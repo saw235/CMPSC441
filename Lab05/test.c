@@ -45,10 +45,12 @@ struct Workspace {
 struct thread_data{
   pthread_t thread_id;
   int thread_num;
-  int condition;
+  int move_count;
   struct Workspace* map;
-}thread_data_array[NUM_THREADS] = {{0, NULL},{1, NULL}};
+}thread_data_array[NUM_THREADS];
 
+
+pthread_mutex_t map_mutex;
 
 // Forward Declaration
 int getRandom(int rangeLow, int rangeHigh);
@@ -69,8 +71,8 @@ void init(struct Workspace *map);
 void *bombAPI(void*threadarg);
 void *robotAPI(void *threadarg);
 void run(void* threaddata);
+void init_thread_data(struct thread_data* thread, struct Workspace* map);
 void StartAPI();
-
 // end Forward Declaration
 
 // getRandom()
@@ -200,20 +202,50 @@ void printMap(struct Workspace *map) {
 } // end printMap()
 
 
+
+
+void init_thread_data(struct thread_data* thread, struct Workspace* map)
+{
+	thread[0].thread_num = 0;
+	thread[1].thread_num = 1;
+
+	thread[0].move_count = 0;
+	thread[1].move_count = 0;
+
+	thread[0].map = map;
+	thread[1].map = map;
+}
+
+
+void run(void* threaddata)
+{
+	pthread_mutex_lock(&map_mutex);
+	pthread_mutex_unlock(&map_mutex);
+}
+
+void *bombAPI(void*threadarg)
+{
+
+}
+
+void *robotAPI(void *threadarg){
+
+}
+
+
 void startAPI(){
   struct Workspace map;
   init(&map);
   printMap(&map);
 
-  thread_data_array[0].map = &map;
-  thread_data_array[1].map = &map;
+  init_thread_data(thread_data_array, &map);
   
+  pthread_mutex_init(&map_mutex, NULL);
   pthread_create(&(thread_data_array[0].thread_id), NULL, robotAPI, (void *)(&thread_data_array[0]));
   pthread_create(&(thread_data_array[1].thread_id), NULL, bombAPI, (void *)(&thread_data_array[1]));
 
+
 }
-
-
 
 int main() {
 
