@@ -75,6 +75,7 @@ void init_thread_data(struct thread_data* thread, struct Workspace* map);
 void StartAPI();
 // end Forward Declaration
 
+/**************************FUNCTIONS******************************/
 // getRandom()
 // Description: Takes in two ranges and return a random number between that.
 int getRandom(int rangeLow, int rangeHigh) {
@@ -166,6 +167,190 @@ void updateWorkspace(struct Workspace *map) {
 
 } // end updateWorkspace()
 
+// MapHasGold()
+// Description: Check if there is gold available in the map
+bool MapHasGold(struct Workspace *map) {
+  printf("Map has %d gold bar(s).\n", map->n_gold);
+  return (map->n_gold > 0);
+} // end MapHasGold()
+
+// randomMove()
+// Description: Get a random direction : Up, down, left, right , topright,
+// topleft, bottomright, bottomleft
+void randomMove(int *x, int *y) {
+  // Randomize a direction
+  do {
+    *x = getRandom(0, 2) - 1;
+    *y = getRandom(0, 2) - 1;
+  } while ((*x == 0) && (*y == 0)); // make sure it is not (0,0)
+
+  // printf("move_x = %d\n", *x);
+  // printf("move_y = %d\n", *y);
+
+} // end randomMove()
+
+// Description: Check if the square has bomb in it
+bool hasBomb(struct Workspace *map, int x, int y) {
+  bool bmb = false;
+  if (map->pos[x][y] == 'B') {
+    bmb = true;
+    printf("Bomb has been found, not moving.\n");
+  }
+  return bmb;
+} // end hasBomb()
+
+// isValidMove()
+// Description: A move is valid if the Robot is not on a bomb and not out of
+// range of the map
+bool isValidMove(struct Workspace *map, int x, int y) {
+  bool valid;
+  if ((map->wall_e.pos_x + x >= 4) || (map->wall_e.pos_x + x) < 0) {
+    valid = false;
+  } // check if x is out of range
+  else if ((map->wall_e.pos_y + y >= 4) || (map->wall_e.pos_y + y < 0)) {
+    valid = false;
+  } // check if y is out of range
+  else if (hasBomb(map, map->wall_e.pos_x + x, map->wall_e.pos_y + y)) {
+    valid = false;
+  } // check if bomb is on the square
+  else {
+    valid = true;
+    printf("Safe to move.\n");
+  }
+
+  // printf("\n Move is %d \n", valid);
+  return valid;
+}
+
+// checkNextSquare()
+// Description: Check next square for possible movement
+void checkNextSquare(struct Workspace *map) {
+
+  // Possible move range for x and y are -1 to 1
+  int x, y;
+
+  // keep checking for possible move until we found one
+  while (true) {
+
+    x = y = 0;
+    // generate a random direction
+    randomMove(&x, &y);
+
+    printf("Checking square (%d,%d).\n", map->wall_e.pos_x + x + 1,
+           map->wall_e.pos_y + y + 1);
+    // if the move is valid then break out of loop
+    if (isValidMove(map, x, y)) {
+      break;
+    }
+    // if (test) {break;} //should be commented out when ifValidMove() is
+    // working
+  }
+
+  // if a valid move is found then to next square
+
+  moveNext(map, x, y);
+  printf("Robot is now at (%d,%d)\n", map->wall_e.pos_x + 1,
+         map->wall_e.pos_y + 1);
+
+} // end checkNextSquare()
+
+// moveNext()
+// Description: Move robot to next square
+void moveNext(struct Workspace *map, const int x, const int y) {
+  map->wall_e.pos_x = map->wall_e.pos_x + x;
+  map->wall_e.pos_y = map->wall_e.pos_y + y;
+} // end moveNext()
+
+// hasGold()
+// Description: Check if Robot Stumble Upon Gold
+bool hasGold(struct Workspace *map) {
+  printf("Checking if gold is encountered.\n"); // For debugging
+
+  updateWorkspace(map);
+  int pos_x = map->wall_e.pos_x;
+  int pos_y = map->wall_e.pos_y;
+
+  if ((map->gb1.pos_x == pos_x) && (map->gb1.pos_y == pos_y) &&
+      map->gb1.available) {
+    printf("Found gold!\n");
+    return 1;
+  }
+  if ((map->gb2.pos_x == pos_x) && (map->gb2.pos_y == pos_y) &&
+      map->gb2.available) {
+    printf("Found gold!\n");
+    return 1;
+  }
+
+  printf("Gold not found.\n");
+  return 0;
+} // end hasGold()
+
+// getGold()
+// Description: Pick up the gold
+void getGold(struct Workspace *map) {
+
+  if ((map->gb1.pos_x == map->wall_e.pos_x) &&
+      (map->gb1.pos_y == map->wall_e.pos_y) && map->gb1.available) {
+    map->gb1.available = false;
+    map->n_gold--;
+    map->wall_e.n_goldcollected++;
+  }
+
+  if ((map->gb2.pos_x == map->wall_e.pos_x) &&
+      (map->gb2.pos_y == map->wall_e.pos_y) && map->gb2.available) {
+    map->gb2.available = false;
+    map->n_gold--;
+    map->wall_e.n_goldcollected++;
+  }
+
+  printf("Gold retrieved!\n");
+} // end getGold()
+
+
+// Run4Gold()
+// Description: Start the sequence for the Robot to search for gold
+void Run4Gold(struct Workspace *map) {
+  // Check if there is still golds in the map
+  while (MapHasGold(map)) {
+    // Update turn counter
+    map->turnCount++;
+    // debug message, should be commented out if not needed
+    // if (test) {printf("There is still gold in the map!\nChecking next
+    // square.\n");}
+
+    // start sequence to examine next square and make a move
+    checkNextSquare(map);
+
+    if (hasGold(map)) {
+      getGold(map);
+    }
+
+    printMap(map);
+    // created to break out of the loop when debugging
+    // if (test) { break;}
+  }
+
+  // end if no gold
+  printf("There is no more gold in the map.\n");
+  return;
+
+} // end Run4Gold()
+
+// printMap()
+// Description: Output the map in a readable format to the console
+void printMap(struct Workspace *map) {
+
+  updateWorkspace(map);
+  int i;
+
+  printf("\nTurn: %i\n", map->turnCount);
+  for (i = 0; i < 4; i++) {
+    printf("-----------------\n| %c | %c | %c | %c |\n", map->pos[0][i],
+           map->pos[1][i], map->pos[2][i], map->pos[3][i]);
+  }
+  printf("-----------------\n");
+} // end printMap()
+
 // init()
 void init(struct Workspace *map) {
   // Initialize blank world
@@ -186,21 +371,6 @@ void init(struct Workspace *map) {
 
 } // end init()
 
-// printMap()
-// Description: Output the map in a readable format to the console
-void printMap(struct Workspace *map) {
-
-  updateWorkspace(map);
-  int i;
-
-  printf("\nTurn: %i\n", map->turnCount);
-  for (i = 0; i < 4; i++) {
-    printf("-----------------\n| %c | %c | %c | %c |\n", map->pos[0][i],
-           map->pos[1][i], map->pos[2][i], map->pos[3][i]);
-  }
-  printf("-----------------\n");
-} // end printMap()
-
 
 
 
@@ -220,20 +390,33 @@ void init_thread_data(struct thread_data* thread, struct Workspace* map)
 void run(void* threaddata)
 {
 	pthread_mutex_lock(&map_mutex);
+
+	 //cast to thread_data pointer
+	struct thread_data *tdat = (struct thread_data*) threaddata;
+
+	//if it is thread 0
+	if (tdat-> thread_num == 0) { 
+		
+		Run4Gold(tdat->map);
+	}
+
+	if (tdat-> thread_num == 1) { printf("In thread %d\n", tdat -> thread_num);}
+
+
 	pthread_mutex_unlock(&map_mutex);
 }
 
 void *bombAPI(void*threadarg)
 {
-
+	run(threadarg);
 }
 
 void *robotAPI(void *threadarg){
-
+	run(threadarg);
 }
 
 
-void startAPI(){
+void StartAPI(){
   struct Workspace map;
   init(&map);
   printMap(&map);
@@ -244,13 +427,16 @@ void startAPI(){
   pthread_create(&(thread_data_array[0].thread_id), NULL, robotAPI, (void *)(&thread_data_array[0]));
   pthread_create(&(thread_data_array[1].thread_id), NULL, bombAPI, (void *)(&thread_data_array[1]));
 
+  pthread_join(thread_data_array[0].thread_id,NULL);
+  pthread_join(thread_data_array[1].thread_id,NULL);
+
 
 }
 
 int main() {
 
   // API Call
-  startAPI();
+  StartAPI();
 
   printf("\nExiting program...\n");
 
