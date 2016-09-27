@@ -50,7 +50,7 @@ struct thread_data{
   struct Workspace* map;
 }thread_data_array[NUM_THREADS];
 
-
+struct timespec sleeptime  = {0, 5000};
 pthread_mutex_t map_mutex;
 
 // Forward Declaration
@@ -66,8 +66,8 @@ void checkNextSquare(struct Workspace *map, void* threadarg);
 void moveNext(struct Workspace *map, const int x, const int y, void* threadarg);
 bool hasGold(struct Workspace *map, int x, int y);
 void getGold(struct Workspace *map);
-void Run4Gold(struct Workspace *map, void* threadarg);
-void Run4Robot(struct Workspace *map, void* threadarg);
+void* Run4Gold(void* threadarg);
+void* Run4Robot(void* threadarg);
 void printMap(struct Workspace *map);
 void init(struct Workspace *map);
 void *bombAPI(void*threadarg);
@@ -93,9 +93,8 @@ void randPos(struct Workspace *map) {
   int x, y, result, low = 0, high = 15, place[4] = {-1};
   bool similar;
 
-  struct timeval time;
   // gettimeofday(&time, NULL);
-  srandom((unsigned int)time.tv_usec);
+  srandom(time(NULL));
 
   for (x = 0; x < 4; x++) {
     do {
@@ -357,61 +356,90 @@ void getGold(struct Workspace *map) {
 
 // Run4Gold()
 // Description: Start the sequence for the Robot to search for gold
-void Run4Gold(struct Workspace *map, void* threadarg) {
-  // Check if there is still golds in the map
-  while (MapHasGold(map)) {
+void *Run4Gold(void* threadarg) {
+  
+   struct thread_data* t_dat = (struct thread_data*) threadarg;
+   
 
-    if (map->robot_caught) { pthread_exit(NULL);}
+  // Check if there is still golds in the map
+  while (1) {
+	
+    pthread_mutex_lock(&map_mutex);
+
+    if (!(MapHasGold(t_dat->map))) {break;}
+    if (t_dat->map->robot_caught) {
+	 pthread_mutex_unlock(&map_mutex);
+	 pthread_exit(NULL);}
     // Update turn counter
-    map->turnCount++;
+    t_dat->map->turnCount++;
     // debug message, should be commented out if not needed
     // if (test) {printf("There is still gold in the map!\nChecking next
     // square.\n");}
 
     // start sequence to examine next square and make a move
-    checkNextSquare(map, threadarg);
+    checkNextSquare(t_dat->map, threadarg);
 
-    if (foundGold(map)) {
-      getGold(map);
+    if (foundGold(t_dat->map)) {
+      getGold(t_dat->map);
     }
 
-    printMap(map);
+    printMap(t_dat->map);
+    
+    
     // created to break out of the loop when debugging
     // if (test) { break;}
+
+    pthread_mutex_unlock(&map_mutex);
+    nanosleep(&sleeptime,NULL);
+
   }
+
+  pthread_mutex_unlock(&map_mutex);
 
   // end if no gold
   printf("There is no more gold in the map.\n");
-  return;
+  pthread_exit(NULL);
 
 } // end Run4Gold()
 
 // Run4Robot()
 // Description: Start the sequence for the Robot to search for gold
-void Run4Robot(struct Workspace *map, void* threadarg) {
+void *Run4Robot(void* threadarg) {
   
-  //loops when robot is not caught
-  while (!map->robot_caught) {
+   struct thread_data* t_dat = (struct thread_data*) threadarg;
 
-    if (!MapHasGold(map)) { printf("Exiting bomb thread.\n"); pthread_exit(NULL);}
+  //loops when robot is not caught
+  while (1) {
+	
+    pthread_mutex_lock(&map_mutex);
+    
+    if (t_dat->map->robot_caught) { break;}
+    if (!MapHasGold(t_dat->map)) { 
+	printf("Exiting bomb thread.\n");    
+	pthread_mutex_unlock(&map_mutex);
+	pthread_exit(NULL);}
     // Update turn counter
-    map->turnCount++;
+    t_dat->map->turnCount++;
 
     // start sequence to examine next square and make a move
-    checkNextSquare(map,threadarg);
+    checkNextSquare(t_dat->map,threadarg);
 
     //if bomb caught the robot, ie: in the same position
-    if ((map->bmb.pos_x == map->wall_e.pos_x) && (map->bmb.pos_y == map->wall_e.pos_y)){
-	map->robot_caught = true;
+    if ((t_dat->map->bmb.pos_x == t_dat->map->wall_e.pos_x) && (t_dat->map->bmb.pos_y == t_dat->map->wall_e.pos_y)){
+	t_dat->map->robot_caught = true;
     }	
-    printMap(map);
+    printMap(t_dat->map);
     // created to break out of the loop when debugging
     // if (test) { break;}
+    pthread_mutex_unlock(&map_mutex);
+    nanosleep(&sleeptime, NULL);
   }
+
+  pthread_mutex_unlock(&map_mutex);
 
   // end if no gold
   printf("Robot is caught!.\n");
-  return;
+  pthread_exit(NULL);
 
 } // end Run4Gold()
 
@@ -451,7 +479,7 @@ void init(struct Workspace *map) {
   map->turnCount = 0;
 
   //set robot_caught to false
-  map-> robot_caught = false;
+  map->robot_caught = false;
 } // end init()
 
 
@@ -480,11 +508,11 @@ void run(void* threaddata)
 	//if it is thread 0
 	if (tdat-> thread_num == 0) { 
 		
-		//Run4Gold(tdat->map, threaddata);
+		Run4Gold(threaddata);
 	}
 
 	if (tdat-> thread_num == 1) {
-		Run4Robot(tdat->map, threaddata);
+		Run4Robot(threaddata);
 	}
 
 
@@ -509,12 +537,13 @@ void StartAPI(){
   init_thread_data(thread_data_array, &map);
   
   pthread_mutex_init(&map_mutex, NULL);
-  pthread_create(&(thread_data_array[0].thread_id), NULL, robotAPI, (void *)(&thread_data_array[0]));
-  pthread_create(&(thread_data_array[1].thread_id), NULL, bombAPI, (void *)(&thread_data_array[1]));
+  pthread_create(&(thread_data_array[0].thread_id), NULL, Run4Gold, (void *)(&thread_data_array[0]));
+  pthread_create(&(thread_data_array[1].thread_id), NULL, Run4Robot, (void *)(&thread_data_array[1]));
 
   pthread_join(thread_data_array[0].thread_id,NULL);
   pthread_join(thread_data_array[1].thread_id,NULL);
-
+  
+  pthread_mutex_destroy(&map_mutex); 
 
 }
 
