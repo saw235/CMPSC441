@@ -52,6 +52,9 @@ struct thread_data{
 
 struct timespec sleeptime  = {0, 5000};
 pthread_mutex_t map_mutex;
+pthread_mutex_t cond_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
 
 // Forward Declaration
 int getRandom(int rangeLow, int rangeHigh);
@@ -365,13 +368,18 @@ void *Run4Gold(void* threadarg) {
   while (1) {
 	
     pthread_mutex_lock(&map_mutex);
-
-    if (!(MapHasGold(t_dat->map))) {break;}
+    
+    //printf("in r4g\n");
+    if (!(MapHasGold(t_dat->map))) { break;}
     if (t_dat->map->robot_caught) {
+
 	 pthread_mutex_unlock(&map_mutex);
+	 printf("Exiting Robot Thread!\n");
 	 pthread_exit(NULL);}
     // Update turn counter
     t_dat->map->turnCount++;
+    t_dat->move_count++;
+
     // debug message, should be commented out if not needed
     // if (test) {printf("There is still gold in the map!\nChecking next
     // square.\n");}
@@ -385,19 +393,21 @@ void *Run4Gold(void* threadarg) {
 
     printMap(t_dat->map);
     
-    
     // created to break out of the loop when debugging
     // if (test) { break;}
-
+    if (t_dat->move_count == 2){
+    t_dat->move_count = 0;
+   	 pthread_cond_signal(&cond);
+    }
     pthread_mutex_unlock(&map_mutex);
     nanosleep(&sleeptime,NULL);
 
   }
 
   pthread_mutex_unlock(&map_mutex);
-
   // end if no gold
   printf("There is no more gold in the map.\n");
+  printf("Exiting Robot Thread!\n");
   pthread_exit(NULL);
 
 } // end Run4Gold()
@@ -410,14 +420,19 @@ void *Run4Robot(void* threadarg) {
 
   //loops when robot is not caught
   while (1) {
-	
+    		
+
     pthread_mutex_lock(&map_mutex);
     
-    if (t_dat->map->robot_caught) { break;}
     if (!MapHasGold(t_dat->map)) { 
-	printf("Exiting bomb thread.\n");    
-	pthread_mutex_unlock(&map_mutex);
-	pthread_exit(NULL);}
+        printf("Exiting bomb thread.\n");
+        pthread_mutex_unlock(&map_mutex);
+        pthread_exit(NULL);}
+    if (t_dat->map->robot_caught) { break;}
+
+    pthread_cond_wait(&cond, &map_mutex);
+
+    //printf("in r4r\n");
     // Update turn counter
     t_dat->map->turnCount++;
 
@@ -439,6 +454,7 @@ void *Run4Robot(void* threadarg) {
 
   // end if no gold
   printf("Robot is caught!.\n");
+  printf("Exiting bomb thread.\n");
   pthread_exit(NULL);
 
 } // end Run4Gold()
@@ -517,15 +533,6 @@ void run(void* threaddata)
 
 
 	pthread_mutex_unlock(&map_mutex);
-}
-
-void *bombAPI(void*threadarg)
-{
-	run(threadarg);
-}
-
-void *robotAPI(void *threadarg){
-	run(threadarg);
 }
 
 
