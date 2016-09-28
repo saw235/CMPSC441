@@ -49,6 +49,8 @@ void canTake((struct data_country*, struct data_canTake*, int);
 void sequence_queue();
 void transmission_mode();
 bool wait_countDown();
+void waitToChannel(struct data_country &country, struct data_channel &channel, struct data_queue &sequence);
+void popQueue(struct data_country &country, struct data_channel &channel, struct data_queue &sequence);
 void SatelliteAPI();
 
 // Function Declaration
@@ -61,12 +63,16 @@ int getRandom(int rangeLow, int rangeHigh){
 
 // Description: Randomly sets if a country has requested to send transmission
 void getActivate(){
-  
+  for(int i = 0; i < 5; i++){
+    country[i].actived = getRandom(0,1);
+  }
 }
 
 // Description: Randomly assign a package if they requested to transmit
 void chosenPack(){
-  
+  for(int i = 0; i < 5; i++){
+    country[i].selectedPack = getRandom(0, 3);
+  }
 }
 
 // Description: 
@@ -84,17 +90,69 @@ void canTake(struct data_country *country, struct data_canTake *canTake, int tot
 
 // Description: setup the queue for the satellite
 void sequence_queue(){
-  
+  int i, j;
+  bool taken;
+  for(i = 0; i < 5; i++){
+    taken = false;
+    do{
+      sequence[i].country =getRandom(0,4);
+      for(j = 0; j < i; j++){
+        if(sequence[i].country == sequence[j].country)
+          taken = true;
+      }
+    }while(taken);
+    sequence[i].waiting = country[sequence[i].country].canTake;
+  }
 }
 
 // Description: Run throught what the satellite does
 void transmission_mode(){
-  
+  while(wait_countDown()){
+    for(i = 0; i < 2; i++){
+      channel[i].countDown--;
+      if(channel[i].countDown == 0)
+        popQueue(country, channel[i], sequence);
+    }
+    hour++;
+  }
 }
 
 // Description: Check if waiting and/or countdown?
 bool wait_countDown(){
-  
+  bool running = false;
+  int i;
+  for(i = 0; i < 5; i++){
+    if(sequence[i].waiting == 1)
+      running = true;
+  }
+  for(i = 0; i < 2; i++){
+    if(channel[i].countDown > 0)
+      running = true;
+  }
+  return running;
+}
+
+// Description: Add a country in the queue to an available channel
+void waitToChannel(struct data_country &country, struct data_channel &channel, struct data_queue &sequence){
+  channel.country = sequence.country;
+  switch(country[sequence.country].selectedPack){
+    case 1: channel.countDown = 1; break;
+    case 2: channel.countDown = 3; break;
+    case 3: channel.countDown = 5; break;
+    case 4: channel.countDown = 10; break;
+    default: channel.countDown = 0; break;
+  }
+  sequence.waiting = 0;
+}
+
+// finds the next available country and push it to the open channel
+void popQueue(struct data_country &country, struct data_channel &channel, struct data_queue &sequence){
+  for(int i = 0; i < 5; i++){
+    if(sequence[i].waiting == 1){
+      waitToChannel(&country, &channel, &sequence[i]);
+      break;
+    }
+  }
 }
 
 // API Declaration
