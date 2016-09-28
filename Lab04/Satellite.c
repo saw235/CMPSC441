@@ -109,9 +109,9 @@ void sequence_queue(){
 void transmission_mode(){
   while(wait_countDown()){
     for(i = 0; i < 2; i++){
-      channel[i].countDown--;
       if(channel[i].countDown == 0)
         popQueue(country, channel[i], sequence);
+      channel[i].countDown--;
     }
     hour++;
   }
