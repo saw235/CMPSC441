@@ -25,17 +25,17 @@ struct data_country{
   int canTake;
   int selectedPack;
   // should we put the data_canTake int available in here?
-}country[5];
+};
 
 struct data_queue{
   int country;
   int waiting;
-}sequence[5];
+};
 
 struct data_channel{
   int countDown;
   int country;
-}channel[2];
+};
 
 struct data_canTake{  // Note the comment in data_country
   int available;
@@ -159,7 +159,13 @@ void popQueue(struct data_country &country, struct data_channel &channel, struct
 void SatelliteAPI(){
   struct timeval time;
   gettimeofday(&time, NULL);
-  
+
+  // Initialize structs
+  struct data_country *country[5] = {{"USA", 0, 0, 0},{"China", 0, 0, 0},{"Japan", 0, 0, 0}, {"Switerzerland", 0, 0, 0}};
+  struct data_channel *channel[2] = {{0, 0}, {0, 0}};
+  struct data_queue *sequence[5];
+  struct data_canTake *canTake;
+
   getActivate();
   chosenPack();
   //canTake((struct data_country *country, struct data_canTake *canTake, int totalCountries);
