@@ -104,15 +104,30 @@ void sequence_queue(struct data_queue* sequence, struct data_country* country){
   bool taken;
   for(i = 0; i < 5; i++){
 	// Possible rewrite to use the data_canTake to check
-    do{
+
+       //for each qeueue position, randomize a value
+        
+	do{
+	    seqeuence[i].country = getRandom(0,4);
+	  } while(!(canTake[i].available));
+
+	canTake[i].available = 0;
+
+       //if !canTake[i].available then randomize another value
+
+       //change canTake[i].available to 0;
+
+
+   /*
+   do{
       taken = false;
       sequence[i].country = getRandom(0,4);
       for(j = 0; j < i; j++){
         if(sequence[i].country == sequence[j].country)
           taken = true;
       }
-    }while(taken == true);
-    sequence[i].waiting = country[sequence[i].country].activated;
+    }while(taken == true);*/
+    sequence[i].waiting = true;
   }
   printf("Queue has been built\n");
 }
