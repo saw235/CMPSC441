@@ -124,10 +124,11 @@ void transmission_mode(struct data_channel * channel, struct data_country* count
     for(i = 0; i < 2; i++){
       if(channel[i].countDown == 0)
         popQueue(country, &channel[i], sequence);
-      channel[i].countDown--;
     }
-    hour++;
     transmissionPrint(channel, country);
+    channel[0].countDown--;
+    channel[1].countDown--;
+    hour++;
   }
 }
 
