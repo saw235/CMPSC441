@@ -63,14 +63,14 @@ int getRandom(int rangeLow, int rangeHigh) {
 
 
 // Description: Randomly sets if a country has requested to send transmission
-void getActivate(){
+void getActivate(struct data_country* country){
   for(int i = 0; i < 5; i++){
     country[i].activated = getRandom(0,1);
   }
 }
 
 // Description: Randomly assign a package if they requested to transmit
-void chosenPack(){
+void chosenPack(struct data_country* country){
   for(int i = 0; i < 5; i++){
     country[i].selectedPack = getRandom(0, 3);
   }
@@ -90,7 +90,7 @@ void canTake(struct data_country *country, struct data_canTake *canTake, int tot
 }
 
 // Description: setup the queue for the satellite
-void sequence_queue(){
+void sequence_queue(struct data_queue* sequence){
   int i, j;
   bool taken;
   for(i = 0; i < 5; i++){
