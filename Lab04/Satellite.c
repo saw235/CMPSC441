@@ -8,6 +8,7 @@
 
 const int totalCountries = 5;
 int hour = 0;
+int profit = 0;
 
 // Notes
 // countries {USA, China, Germany, Japan, Switerzerland}
@@ -163,7 +164,6 @@ void popQueue(struct data_country *country, struct data_channel *channel, struct
 
 // Description: Calculate the amount of money made by transmitting
 void profit(struct data_country *country){
-  int profit = 0;
   for(int i = 0; i < 5; i++){
     switch(country->selectedPack){
       case 1: profit += 210; break;
@@ -188,7 +188,7 @@ void SatelliteAPI(){
 
   getActivate();
   chosenPack();
-  //canTake((struct data_country *country, struct data_canTake *canTake, int totalCountries);
+  canTake((struct data_country *country, struct data_canTake *canTake, int totalCountries);
   sequence_queue();
   transmission_mode();
   profit(country);
