@@ -8,7 +8,7 @@
 
 const int totalCountries = 5;
 int hour = 0;
-int profit = 0;
+int totalProfit = 0;
 
 // Notes
 // countries {USA, China, Germany, Japan, Switerzerland}
@@ -46,7 +46,7 @@ struct data_canTake{  // Note the comment in data_country
 int getRandom(int, int);
 void getActivate(struct data_country*);
 void chosenPack(struct data_country*);
-void canTake(struct data_country*, struct data_canTake*, int);
+void CanTake(struct data_country*, struct data_canTake*);
 void sequence_queue(struct data_queue*, struct data_country*);
 void transmission_mode(struct data_channel*, struct data_country*, struct data_queue*);
 bool wait_countDown(struct data_queue*, struct data_channel*);
@@ -85,7 +85,7 @@ void chosenPack(struct data_country* country){
 }
 
 // Description: 
-void canTake(struct data_country *country, struct data_canTake *canTake, int totalCountries){
+void CanTake(struct data_country *country, struct data_canTake *canTake){
   int i;
   for(i = 0; i < totalCountries; i++){
     if(country[i].activated){
@@ -117,7 +117,7 @@ void sequence_queue(struct data_queue* sequence, struct data_country* country){
 // Description: Run throught what the satellite does
 void transmission_mode(struct data_channel * channel, struct data_country* country, struct data_queue* sequence){
   int i;
-  while(wait_countDown()){
+  while(wait_countDown(sequence, channel)){
     for(i = 0; i < 2; i++){
       if(channel[i].countDown == 0)
         popQueue(country, &channel[i], sequence);
@@ -168,12 +168,12 @@ void popQueue(struct data_country *country, struct data_channel *channel, struct
 // Description: Calculate the amount of money made by transmitting
 void profit(struct data_country *country){
   for(int i = 0; i < 5; i++){
-    switch(country->selectedPack){
-      case 1: profit += 210; break;
-      case 2: profit += 350; break;
-      case 3: profit += 400; break;
-      case 4: profit += 500; break;
-      default: profit += 0; break;
+    switch(country[i].selectedPack){
+      case 1: totalProfit += 210; break;
+      case 2: totalProfit += 350; break;
+      case 3: totalProfit += 400; break;
+      case 4: totalProfit += 500; break;
+      default: totalProfit += 0; break;
     }
   }
 }
@@ -183,12 +183,12 @@ void profit(struct data_country *country){
 void initPrint(struct data_country *country, struct data_queue *sequence){
   int i;
   for(i = 0; i < 5; i++){
-    printf("Country: 	%s\nActivated:	%d\nPackage:	%dTB\n", country[i]->name, country[i]->activated, country[i]->selectedPack);
+    printf("Country: 	%s\nActivated:	%d\nPackage:	%dTB\n", country[i].name, country[i].activated, country[i].selectedPack);
   }
   printf("Satellite Queue:\n");
   for(i = 0; i < 5; i++){
-    if(sequence[i]->waiting == 1)
-      printf("%s\n"country[sequence[i]->country]->name);
+    if(sequence[i].waiting == 1)
+      printf("%s\n",country[sequence[i].country].name);
   }
 }
 
@@ -196,14 +196,14 @@ void initPrint(struct data_country *country, struct data_queue *sequence){
 void transmissionPrint(struct data_channel *channel, struct data_country *country){
   printf("-------------------\nHour:	%d\n", hour);
   for(int i = 0; i < 2; i++){
-    printf("\nChannel:	%d\nCountry:	%s\nTime Left:	%d hr\n", i + 1, country[channel[i]->country]->name, channel[i]->countDown);
+    printf("\nChannel:	%d\nCountry:	%s\nTime Left:	%d hr\n", i + 1, country[channel[i].country].name, channel[i].countDown);
   }
   printf("-------------------\n\n");
 }
 
 
 void finalPrint(){
-  printf("Satellite going into sleepmode for maintenance\nTotal Hours: %d\nTotal Profit: $%d\n", hour, profit);
+  printf("Satellite going into sleepmode for maintenance\nTotal Hours: %d\nTotal Profit: $%d\n", hour, totalProfit);
 }
 
 // API Declaration
@@ -217,18 +217,18 @@ void SatelliteAPI(){
   struct data_queue sequence[5];
   struct data_canTake canTake;
 
-  getActivate(country);
-  chosenPack(country);
-  canTake(country, canTake);
-  sequence_queue(sequence, country);
-  initPrint(country, sequence);
-  transmission_mode(channel, country, sequence);
-  profit(country);
+  getActivate(&country);
+  chosenPack(&country);
+  CanTake(&country, &canTake);
+  sequence_queue(&sequence, &country);
+  initPrint(&country, &sequence);
+  transmission_mode(&channel, &country, &sequence);
+  profit(&country);
   finalPrint();
 }
 
 int main(){
   // API Call
-//  SatelliteAPI();
-//  return 0;
+  SatelliteAPI();
+  return 0;
 }
