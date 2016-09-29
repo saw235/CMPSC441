@@ -212,8 +212,7 @@ void finalPrint(){
 
 // API Declaration
 void SatelliteAPI(){
-  struct timeval time;
-  gettimeofday(&time, NULL);
+  srand(time(NULL));
 
   // Initialize structs
   struct data_country country[5] = {{"USA", 0, 0},{"China", 0, 0}, {"Germany", 0, 0},{"Japan", 0, 0}, {"Switerzerland", 0, 0}};
