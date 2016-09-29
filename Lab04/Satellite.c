@@ -53,6 +53,9 @@ bool wait_countDown(struct data_queue*, struct data_channel*);
 void waitToChannel(struct data_country *country, struct data_channel *channel, struct data_queue *sequence);
 void popQueue(struct data_country *country, struct data_channel *channel, struct data_queue *sequence);
 void profit(struct data_country *country);
+void initPrint(struct data_country *country, struct data_queue *sequence);
+void transmissionPrint(struct data_channel *channel, struct data_country *country);
+void finalPrint();
 void SatelliteAPI();
 
 // Function Declaration
@@ -175,6 +178,34 @@ void profit(struct data_country *country){
   }
 }
 
+
+
+void initPrint(struct data_country *country, struct data_queue *sequence){
+  int i;
+  for(i = 0; i < 5; i++){
+    printf("Country: 	%s\nActivated:	%d\nPackage:	%dTB\n", country[i]->name, country[i]->activated, country[i]->selectedPack);
+  }
+  printf("Satellite Queue:\n");
+  for(i = 0; i < 5; i++){
+    if(sequence[i]->waiting == 1)
+      printf("%s\n"country[sequence[i]->country]->name);
+  }
+}
+
+
+void transmissionPrint(struct data_channel *channel, struct data_country *country){
+  printf("-------------------\nHour:	%d\n", hour);
+  for(int i = 0; i < 2; i++){
+    printf("\nChannel:	%d\nCountry:	%s\nTime Left:	%d hr\n", i + 1, country[channel[i]->country]->name, channel[i]->countDown);
+  }
+  printf("-------------------\n\n");
+}
+
+
+void finalPrint(){
+  printf("Satellite going into sleepmode for maintenance\nTotal Hours: %d\nTotal Profit: $%d\n", hour, profit);
+}
+
 // API Declaration
 void SatelliteAPI(){
   struct timeval time;
@@ -186,12 +217,14 @@ void SatelliteAPI(){
   struct data_queue sequence[5];
   struct data_canTake canTake;
 
-  getActivate();
-  chosenPack();
-  canTake((struct data_country *country, struct data_canTake *canTake, int totalCountries);
-  sequence_queue();
-  transmission_mode();
+  getActivate(country);
+  chosenPack(country);
+  canTake(country, canTake);
+  sequence_queue(sequence, country);
+  initPrint(country, sequence);
+  transmission_mode(channel, country, sequence);
   profit(country);
+  finalPrint();
 }
 
 int main(){
