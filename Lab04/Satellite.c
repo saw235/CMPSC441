@@ -6,8 +6,8 @@
 #include <stdbool.h>
 #include <time.h>
 
-// Defines
-#define totalCountries 5
+const int totalCountries = 5;
+int hour = 0;
 
 // Notes
 // countries {USA, China, Germany, Japan, Switerzerland}
@@ -45,26 +45,27 @@ struct data_canTake{  // Note the comment in data_country
 int getRandom(int, int);
 void getActivate();
 void chosenPack();
-void canTake((struct data_country*, struct data_canTake*, int);
+void canTake(struct data_country*, struct data_canTake*, int);
 void sequence_queue();
 void transmission_mode();
 bool wait_countDown();
-void waitToChannel(struct data_country &country, struct data_channel &channel, struct data_queue &sequence);
-void popQueue(struct data_country &country, struct data_channel &channel, struct data_queue &sequence);
+void waitToChannel(struct data_country *country, struct data_channel *channel, struct data_queue *sequence);
+void popQueue(struct data_country *country, struct data_channel *channel, struct data_queue *sequence);
 void SatelliteAPI();
 
 // Function Declaration
-int getRandom(int rangeLow, int rangeHigh){
-  double myRand = randd()/(1.0 + RAND_MAX);
-  int range = rangeHigh - rangeLow +1;
-  int myRand_scaled = (myRand* range) + rangeLow;
-  return MyRand_scaled;
-}
+int getRandom(int rangeLow, int rangeHigh) {
+  double myRand = rand() / (1.0 + RAND_MAX);
+  int range = rangeHigh - rangeLow + 1;
+  int myRand_scaled = (myRand * range) + rangeLow;
+  return myRand_scaled;
+} // end getRandom()
+
 
 // Description: Randomly sets if a country has requested to send transmission
 void getActivate(){
   for(int i = 0; i < 5; i++){
-    country[i].actived = getRandom(0,1);
+    country[i].activated = getRandom(0,1);
   }
 }
 
@@ -79,8 +80,8 @@ void chosenPack(){
 void canTake(struct data_country *country, struct data_canTake *canTake, int totalCountries){
   int i;
   for(i = 0; i < totalCountries; i++){
-    if(country[i].active){
-      canTake[i]].available = country[i].active;
+    if(country[i].activated){
+      canTake[i].available = country[i].activated;
     }
     else{
       canTake[i].available = (int)0;
@@ -107,10 +108,11 @@ void sequence_queue(){
 
 // Description: Run throught what the satellite does
 void transmission_mode(){
+  int i;
   while(wait_countDown()){
     for(i = 0; i < 2; i++){
       if(channel[i].countDown == 0)
-        popQueue(country, channel[i], sequence);
+        popQueue(country, &channel[i], sequence);
       channel[i].countDown--;
     }
     hour++;
@@ -133,23 +135,23 @@ bool wait_countDown(){
 }
 
 // Description: Add a country in the queue to an available channel
-void waitToChannel(struct data_country &country, struct data_channel &channel, struct data_queue &sequence){
-  channel.country = sequence.country;
-  switch(country[sequence.country].selectedPack){
-    case 1: channel.countDown = 1; break;
-    case 2: channel.countDown = 3; break;
-    case 3: channel.countDown = 5; break;
-    case 4: channel.countDown = 10; break;
-    default: channel.countDown = 0; break;
+void waitToChannel(struct data_country *country, struct data_channel *channel, struct data_queue *sequence){
+  channel->country = sequence->country;
+  switch(country[sequence->country].selectedPack){
+    case 1: channel->countDown = 1; break;
+    case 2: channel->countDown = 3; break;
+    case 3: channel->countDown = 5; break;
+    case 4: channel->countDown = 10; break;
+    default: channel->countDown = 0; break;
   }
-  sequence.waiting = 0;
+  sequence->waiting = 0;
 }
 
 // finds the next available country and push it to the open channel
-void popQueue(struct data_country &country, struct data_channel &channel, struct data_queue &sequence){
+void popQueue(struct data_country *country, struct data_channel *channel, struct data_queue *sequence){
   for(int i = 0; i < 5; i++){
     if(sequence[i].waiting == 1){
-      waitToChannel(&country, &channel, &sequence[i]);
+      waitToChannel(&country[i], channel, &sequence[i]);
       break;
     }
   }
@@ -169,6 +171,6 @@ void SatelliteAPI(){
 
 int main(){
   // API Call
-  SatelliteAPI();
-  return 0;
+//  SatelliteAPI();
+//  return 0;
 }
