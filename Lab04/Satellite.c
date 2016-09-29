@@ -72,10 +72,10 @@ void getActivate(struct data_country* country){
     country[i].activated = getRandom(0,1);
   }
   
-    for (int i = 0; i < totalCountries; i++)
+   /* for (int i = 0; i < totalCountries; i++)
   {
     printf("country[%d].activated = %d\n", i, country[i].activated );
-  }
+  }*/
 
  
   printf("Activated successfully\n");
@@ -90,11 +90,11 @@ void chosenPack(struct data_country* country){
       country[i].selectedPack = -1;
   }
 
-  for (int i =0; i < 5; i++)
+  /*for (int i =0; i < 5; i++)
     {
 	 printf("country[%d].selectedPack = %d\n", i, country[i].selectedPack);
     }
-    
+    */
   printf("Package selected successfully\n");
 }
 
@@ -111,10 +111,10 @@ void CanTake(struct data_country *country, struct data_canTake *canTake){
   }
 
   //debug message
-  for (i = 0; i < totalCountries; i++)
+  /*for (i = 0; i < totalCountries; i++)
   {
     printf("canTake[%d].available = %d\n", i, canTake[i].available);
-  }
+  }*/
   printf("Can Take successfully\n");
 }
 
@@ -139,23 +139,24 @@ void sequence_queue(struct data_queue* sequence, struct data_country* country, s
 
      //break if avaiable, set canTake[i].available to unavaiable
      if (canTake[temp].available) {
-		printf("Queing country %d \n", temp);
+		//printf("Queing country %d \n", temp);
 		sequence[i].country = temp;		
 		canTake[temp].available = false;
-		printf("canTake[%d].available = %d\n", temp, canTake[temp].available); 
+		//printf("canTake[%d].available = %d\n", temp, canTake[temp].available); 
 		canTake_num--;
-                printf("canTake_num = %d\n", canTake_num); 
+               // printf("canTake_num = %d\n", canTake_num); 
 		sequence[i].waiting = true;
 		break;}
 
      //break if nothing is available
-     if (canTake_num == 0) {printf("canTake_num = %d\n", canTake_num); break;}     
+     if (canTake_num == 0) { //printf("canTake_num = %d\n", canTake_num); 
+	break;}     
       }//end while
       
 
   }
 
-  for( i = 0; i< 5; i++)
+  /*for( i = 0; i< 5; i++)
   {
     sequence[i].waiting = country[sequence[i].country].activated;
     printf("sequence[%d].country = %d\n", i, sequence[i].country );
@@ -167,7 +168,7 @@ void sequence_queue(struct data_queue* sequence, struct data_country* country, s
      printf("sequence[%d].waiting = %d\n", i, sequence[i].waiting);
     
   }
-   
+   */
   printf("Queue has been built\n");
 }
 
@@ -177,6 +178,7 @@ void transmission_mode(struct data_channel * channel, struct data_country* count
 
   while(wait_countDown(sequence, channel)){
     //printDebug(sequence, channel);  
+    //getchar();
     for (i = 0; i < 2 ; i++)
     { 
      if(channel[i].countDown < 0)
@@ -194,9 +196,9 @@ void transmission_mode(struct data_channel * channel, struct data_country* count
     {     
     if (channel[i].country != -1)
      { //printDebug(sequence, channel);  
-	if (channel[i].countDown == 0) { channel[i].country = 1;}
+	if (channel[i].countDown == 0) { channel[i].country = -1;}
 	
-	else {	channel[i].countDown--;} 
+	channel[i].countDown--;
 	//printDebug(sequence, channel);
     	//getchar();
       }
@@ -213,29 +215,29 @@ void transmission_mode(struct data_channel * channel, struct data_country* count
 
 // Description: Check if waiting and/or countdown?
 bool wait_countDown(struct data_queue* sequence, struct data_channel* channel){
-  bool running = false;
+  
   int i;
   for(i = 0; i < 5; i++){
     if(sequence[i].waiting == 1)
-      running = true; break;
+      return true;
   }
   for(i = 0; i < 2; i++){
     if(channel[i].countDown > 0)
-      running = true;
+      return true;
   }
 
   //printf("wait_countDown= %d\n", running);
-  return running;
+  return false;
 }
 
 // Description: Add a country in the queue to an available channel
 void waitToChannel(struct data_country *country, struct data_channel *channel, struct data_queue *sequence){
   channel->country = sequence->country;
-  for (int i =0; i < 5; i++)
+  /*for (int i =0; i < 5; i++)
     {
 	 printf("country[%d].selectedPack = %d\n", i, country[i].selectedPack);
     }
-    
+    */
   switch(country[sequence->country].selectedPack + 1){
     case 1: channel->countDown = 1; break;
     case 2: channel->countDown = 3; break;
@@ -249,10 +251,10 @@ void waitToChannel(struct data_country *country, struct data_channel *channel, s
 // finds the next available country and push it to the open channel
 void popQueue(struct data_country *country, struct data_channel *channel, struct data_queue *sequence){
  
-   for (int i =0; i < 5; i++)
+   /*for (int i =0; i < 5; i++)
     {
 	 printf("country[%d].selectedPack = %d\n", i, country[i].selectedPack);
-    }
+    }*/
     //goes through the sequence and place the first one to channel
   for(int i = 0; i < 5; i++){
     if(sequence[i].waiting == 1){
@@ -262,10 +264,10 @@ void popQueue(struct data_country *country, struct data_channel *channel, struct
 
   }
   //else theres nothing to put into channel, set channel.country to -1
-for (int i =0; i < 5; i++)
+/*for (int i =0; i < 5; i++)
     {
 	 printf("country[%d].selectedPack = %d\n", i, country[i].selectedPack);
-    }
+    }*/
 
 }
 
@@ -349,7 +351,7 @@ void SatelliteAPI(){
   CanTake(country, canTake);
   sequence_queue(sequence, country, canTake);
   initPrint(country, sequence);
-  printDebug(sequence, channel);
+  //printDebug(sequence, channel);
   transmission_mode(channel, country, sequence);
   profit(country);
   finalPrint();
