@@ -51,6 +51,7 @@ void transmission_mode();
 bool wait_countDown();
 void waitToChannel(struct data_country *country, struct data_channel *channel, struct data_queue *sequence);
 void popQueue(struct data_country *country, struct data_channel *channel, struct data_queue *sequence);
+void profit(struct data_country *country);
 void SatelliteAPI();
 
 // Function Declaration
@@ -72,7 +73,10 @@ void getActivate(){
 // Description: Randomly assign a package if they requested to transmit
 void chosenPack(){
   for(int i = 0; i < 5; i++){
-    country[i].selectedPack = getRandom(0, 3);
+    if(country[i]->activated == 1)
+      country[i].selectedPack = getRandom(0, 3);
+    else
+      country[i]->selectedPack = -1;
   }
 }
 
@@ -157,6 +161,20 @@ void popQueue(struct data_country *country, struct data_channel *channel, struct
   }
 }
 
+// Description: Calculate the amount of money made by transmitting
+void profit(struct data_country *country){
+  int profit = 0;
+  for(int i = 0; i < 5; i++){
+    switch(country->selectedPack){
+      case 1: profit += 210; break;
+      case 2: profit += 350; break;
+      case 3: profit += 400; break;
+      case 4: profit += 500; break;
+      default: profit += 0; break;
+    }
+  }
+}
+
 // API Declaration
 void SatelliteAPI(){
   struct timeval time;
@@ -173,6 +191,7 @@ void SatelliteAPI(){
   //canTake((struct data_country *country, struct data_canTake *canTake, int totalCountries);
   sequence_queue();
   transmission_mode();
+  profit(country);
 }
 
 int main(){
