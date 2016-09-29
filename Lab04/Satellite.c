@@ -44,12 +44,12 @@ struct data_canTake{  // Note the comment in data_country
 
 // Function Headers
 int getRandom(int, int);
-void getActivate();
-void chosenPack();
+void getActivate(struct data_country*);
+void chosenPack(struct data_country*);
 void canTake(struct data_country*, struct data_canTake*, int);
-void sequence_queue();
-void transmission_mode();
-bool wait_countDown();
+void sequence_queue(struct data_queue*, struct data_country*);
+void transmission_mode(struct data_channel*, struct data_country*, struct data_queue*);
+bool wait_countDown(struct data_queue*, struct data_channel*);
 void waitToChannel(struct data_country *country, struct data_channel *channel, struct data_queue *sequence);
 void popQueue(struct data_country *country, struct data_channel *channel, struct data_queue *sequence);
 void profit(struct data_country *country);
@@ -74,10 +74,10 @@ void getActivate(struct data_country* country){
 // Description: Randomly assign a package if they requested to transmit
 void chosenPack(struct data_country* country){
   for(int i = 0; i < 5; i++){
-    if(country[i]->activated == 1)
+    if(country[i].activated == 1)
       country[i].selectedPack = getRandom(0, 3);
     else
-      country[i]->selectedPack = -1;
+      country[i].selectedPack = -1;
   }
 }
 
@@ -95,7 +95,7 @@ void canTake(struct data_country *country, struct data_canTake *canTake, int tot
 }
 
 // Description: setup the queue for the satellite
-void sequence_queue(struct data_queue* sequence){
+void sequence_queue(struct data_queue* sequence, struct data_country* country){
   int i, j;
   bool taken;
   for(i = 0; i < 5; i++){
@@ -112,7 +112,7 @@ void sequence_queue(struct data_queue* sequence){
 }
 
 // Description: Run throught what the satellite does
-void transmission_mode(){
+void transmission_mode(struct data_channel * channel, struct data_country* country, struct data_queue* sequence){
   int i;
   while(wait_countDown()){
     for(i = 0; i < 2; i++){
@@ -125,7 +125,7 @@ void transmission_mode(){
 }
 
 // Description: Check if waiting and/or countdown?
-bool wait_countDown(){
+bool wait_countDown(struct data_queue* sequence, struct data_channel* channel){
   bool running = false;
   int i;
   for(i = 0; i < 5; i++){
@@ -181,10 +181,10 @@ void SatelliteAPI(){
   gettimeofday(&time, NULL);
 
   // Initialize structs
-  struct data_country *country[5] = {{"USA", 0, 0, 0},{"China", 0, 0, 0},{"Japan", 0, 0, 0}, {"Switerzerland", 0, 0, 0}};
-  struct data_channel *channel[2] = {{0, 0}, {0, 0}};
-  struct data_queue *sequence[5];
-  struct data_canTake *canTake;
+  struct data_country country[5] = {{"USA", 0, 0, 0},{"China", 0, 0, 0},{"Japan", 0, 0, 0}, {"Switerzerland", 0, 0, 0}};
+  struct data_channel channel[2] = {{0, 0}, {0, 0}};
+  struct data_queue sequence[5];
+  struct data_canTake canTake;
 
   getActivate();
   chosenPack();
