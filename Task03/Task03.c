@@ -24,7 +24,7 @@ typedef struct thread{
 typedef struct thread2{
   pthread_t thread_id;
   int id;
-  int condition, s, copy_goal, copy_cycle;
+  int condition, x, copy_goal;
   char name[7], letter;
 } thread_data2;
 
@@ -51,13 +51,15 @@ pthread_mutex_t timeTravel_signal_mutex;
 void setup_time_seed();
 int getRandom(int rangeLow, int rangeHigh);
 void *run_API(void *thread);
+void *run2_API(void *thread);
 void runner_signal(thread_data *runner);
+void runner_signal2(thread_data *runner);			// Need to implement
 void init_data(thread_data *thread);
-void init_data2(thread_data2 *thread);		// Need to implemet
+void init_data2(thread_data2 *thread);
 void print_map();
-void print_map2();				// Need to implement
+void print_map2();														// Need to implement
 bool valid_move(char c, int x, int y);
-bool valid_move2(char c, int x);		// Need to implement (maybe not needed)
+bool valid_move2(char c, int x);							// Need to implement (maybe not needed)
 void check_pos(thread_data *runner, int x, int y);
 int check_person(int x, int y);
 void update_pos(char c, int xn, int yn, int *xo, int *yo);
@@ -65,7 +67,7 @@ void rand_pos(int *x, int *y);
 void move_mtn();
 void init_pos(thread_data *thread);
 void create_map();
-void create_map2();				// Need to implement
+void create_map2();														// Need to implement
 
 // Function Delcarations
 void setup_time_seed(){
@@ -309,6 +311,52 @@ void runner_signal(thread_data *runner){
   pthread_mutex_unlock(&timeTravel_signal_mutex);
 }
 
+void runner_signal2(thread_data *runner){
+	pthread_mutex_lock(&timeTravel_signal_mutex);
+	// Check condition
+	if(runner->condition == shared.condition){
+		// Print out character name
+		printf("%s: entered mutex_lock", runner->name);
+		// Check if Sam (id = 2)
+		if(runner->id == 2){
+			// Check if cycle is odd
+			if(shared.cycle % 2 == 1){
+				// set frozen[0] = rand
+				shared.frozen[0] = getRandom(0, 1);
+				// set frozen[1] = rand
+				shared.frozen[1] = getRandom(0, 1);
+			}
+		}
+		// Else (not Sam)
+		else{
+			// Check if frozen
+			if(!shared.frozen[runner->id - 1]){
+				// No longer frozen???
+				shared.frozen[runner->id - 1] = 0;
+			}
+			// Not frozen
+			else{
+				// inc pos x
+				shared.map[runner->id -1][runner->x] = ' ';
+				runner->x++;
+				shared.map[runner->id -1][runner->x] = runner->letter;
+			}
+			// Check for win
+			if(runner->x == 9){
+				strcpy(shared.winner, runner.name);
+				shared.goal = 1;
+			}
+		}
+		// Update cycle and condition in  shared
+		shared.cycle++;
+		shared.condition = runner->id;
+		runner->copy_goal = shared.goal;
+		// Print map
+		print_map2();
+	}
+	pthread_mutex_lock(&timeTravel_signal_mutex);
+}
+
 void init_data(thread_data *thread){
   // Initialize Shared data
   create_map();
@@ -382,28 +430,28 @@ void init_data2(thread_data2 *thread){
   thread[0].id = 0;
   thread[0].condition = 2;
   thread[0].copy_goal = shared.goal;
-  thread[0].copy_cycle = shared.cycle;
-  thread[0].letter = 'x';
+  //thread[0].letter = 'x';
   thread[0].x = 0;
-  strcpy(thread[0].name, "x");
+  //strcpy(thread[0].name, "x");
 
   thread[1].thread_id = 1;
   thread[1].id = 1;
   thread[1].condition = 0;
   thread[1].copy_goal = shared.goal;
-  thread[1].copy_cycle = shared.cycle;
-  thread[1].letter = 'y';
+  //thread[1].letter = 'y';
   thread[1].x = 0;
-  strcpy(thread[1].name, "y");
+  //strcpy(thread[1].name, "y");
 
   thread[2].thread_id = 2;
   thread[2].id = 2;
   thread[2].condition = 1;
   thread[2].copy_goal = shared.goal;
-  thread[2].copy_cycle = shared.cycle;
-  thread[2].letter = 'x';
+  thread[2].letter = 'S';
   thread[2].x = 0;
-  strcpy(thread[2].name, "x");
+  strcpy(thread[2].name, "Sam");
+  
+  printf("threads have been created");
+  print_map2();
 }
 
 // API
@@ -421,7 +469,15 @@ void *run_API(void *thread){
 }
 
 void *run2_API(void *thread){
-
+	thread_data2 *runner = (thread_data*)thread;
+	setup_time_seed();
+	
+	while(!runner->copy_goal){
+		runner_signal2(runner);
+		sleep(2);
+	}
+	
+	pthreat_exit(NULL):
 }
 
 // Main
@@ -441,12 +497,22 @@ int main(int argc, char *argv[]){
   for(i = 0; i < 4; i++){
     pthread_join(thread[i].thread_id, NULL);
   }
+  
+  // Second Race
   if(shared_t.goal_t == 2){
-    // Create the threads for the Second Race
-
-    // Join the threads from the Second Race
-
     printf("The second winner is %s\n\n", shared_t.winner_t[1]);
+    
+  	thread_data2 thread2[3];
+  	init_data2(&thread2);
+    // Create the threads for the Second Race
+		for(i = 0; i < 3; i++){
+			thread[i].thread_id = i;
+			pthread_crate(&(thread2[i].thread_id, NULL, run2_API, (void *)(&thread2[i]));
+		}
+    // Join the threads from the Second Race
+    for(i = 0; i < 3; i++){
+    	pthraed_join(thread[i].thrad_id, NULL);
+		}
   }
   pthread_mutex_destroy(&timeTravel_signal_mutex);
   printf("Threads destroyed\n");
