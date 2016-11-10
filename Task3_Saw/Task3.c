@@ -573,13 +573,13 @@ bool foundPerson(struct Workspace *map, void* threadarg)
 	map->mvin.tty = true;
         found = true;
      }
-  else if (map->bun.pos_x == pos_x && map->bun.pos_y == pos_y && !(map->bun.dead) && !(map->tty.won))
+  else if (map->bun.pos_x == pos_x && map->bun.pos_y == pos_y && !(map->bun.dead) && !(map->bun.won))
      {
 	printf("Found Bugs bunny!...\n");
 	map->mvin.bugs = true;
         found = true;
      }
-  else if (map->tz.pos_x == pos_x && map->tz.pos_y == pos_y && !(map->tz.dead) && !(map->tty.won))
+  else if (map->tz.pos_x == pos_x && map->tz.pos_y == pos_y && !(map->tz.dead) && !(map->tz.won))
      {
 	printf("Found Taz Devil!...\n");
 	map->mvin.tz = true;
@@ -912,15 +912,6 @@ void *MarvinRun(void* threadarg) {
 	
     pthread_mutex_lock(&map1_mutex);
 
-    if (t_dat->map->num_ded == 3){   
-	printf("Everyone else is dead. Marvin won.\n");    
-	
-	printf("Exiting Marvin thread.\n");    
-	pthread_mutex_unlock(&map1_mutex);
-	pthread_exit(NULL);
-
-    }
-
     if (t_dat->map->num_won == t_dat->map->flag_count  ){ 
 	printf("Exiting Marvin thread.\n");    
 	pthread_mutex_unlock(&map1_mutex);
@@ -1057,6 +1048,7 @@ struct ToonY{
 struct Workspace2 {
   char pos[MAP2_WIDTH][MAP2_HEIGHT];
   int turn_count;
+  bool justMar;
 
   struct ToonX tX;
   struct ToonY tY;
@@ -1101,19 +1093,36 @@ void printMap2(struct Workspace2 *map) {
   char tYstring[20];
   printf("\nTurn: %i\n", map->turn_count);
 
-
+	
   if (map->tX.frozen) { strcpy(tXstring, "Frozen");}
   else { strcpy(tXstring, "Normal");}
   
+  if (!map->justMar)
+  {
   if (map->tY.frozen) { strcpy(tYstring, "Frozen");}
   else { strcpy(tYstring, "Normal");}
   
+
   printf("%s: %s  %s: %s\n", map->tX.name,tXstring,map->tY.name, tYstring); 
   for (j = 0; j < MAP_HEIGHT; j++) {
     printf("-----------------\n| %c | %c |\n", map->pos[0][j],
            map->pos[1][j]);
   }
   printf("-----------------\n");
+
+
+  } else {
+  printf("%s: %s \n", map->tX.name,tXstring); 
+  for (j = 0; j < MAP_HEIGHT; j++) {
+    printf("-----------------\n| %c | %c |\n", map->pos[0][j],
+           map->pos[1][j]);
+  }
+  printf("-----------------\n");
+  }
+
+
+
+
 } // end printMap()
 
 
@@ -1127,8 +1136,12 @@ void updateWorkspace2(struct Workspace2 *map) {
 
   if (map->tX.char_id == 2) { map->pos[map->tX.pos_x][map->tX.pos_y] = 'D';}
   else {map->pos[map->tX.pos_x][map->tX.pos_y] = map->tX.name[0];}
+
+  if (!map->justMar)
+  {
   if (map->tY.char_id == 2) { map->pos[map->tY.pos_x][map->tY.pos_y] = 'D';}
   else {map->pos[map->tY.pos_x][map->tY.pos_y] = map->tY.name[0];}
+  }
 
 } // end updateWorkspace()
 
@@ -1160,6 +1173,8 @@ void init2(struct Workspace2 *map) {
 	case 3 : strcpy(map->tX.name, "Marvin"); break;
   }
 
+  if (!map->justMar)
+  {
     switch (map->tY.char_id)
   {
 	case 0 : strcpy(map->tY.name, "Tweety"); break;
@@ -1167,7 +1182,8 @@ void init2(struct Workspace2 *map) {
 	case 2 : strcpy(map->tY.name, "Taz"); break;
 	case 3 : strcpy(map->tY.name, "Marvin"); break;
   }
-  
+  }
+
   // Set turn count to one
   map->turn_count = 1;
 
@@ -1188,6 +1204,12 @@ void* tXRun(void* threadarg)
 
 	struct thread_data_2* t_dat = (struct thread_data_2*) threadarg;
 
+
+	int maxturn;
+
+	if (t_dat->map->justMar) { maxturn = 2;}
+	else { maxturn = 3;}
+
 	while(1)
 	{
 		pthread_mutex_lock(&map2_mutex);
@@ -1199,7 +1221,7 @@ void* tXRun(void* threadarg)
         			pthread_exit(NULL);
 			}
 
-		if (t_dat->map->turn_count%3 == 1){
+		if (t_dat->map->turn_count%maxturn == 1){
 			
 			//check if frozen
 			if (!t_dat->map->tX.frozen)
@@ -1213,7 +1235,8 @@ void* tXRun(void* threadarg)
 			    t_dat->map->tX.won = true;
 			    break;
 			}
-
+			
+			
 			t_dat->map->turn_count += 1; 
 
 			printMap2(t_dat->map);
@@ -1289,6 +1312,11 @@ void* SAMZap(void* threadarg)
 
 	struct thread_data_2* t_dat = (struct thread_data_2*) threadarg;
 
+	int maxturn;
+
+	if (t_dat->map->justMar) { maxturn = 2;}
+	else { maxturn = 3;}
+
 	while(1)
 	{	
 		pthread_mutex_lock(&map2_mutex);
@@ -1301,7 +1329,7 @@ void* SAMZap(void* threadarg)
        			pthread_mutex_unlock(&map2_mutex);
         		pthread_exit(NULL);
 		}
-		if (t_dat->map->turn_count%3 == 0){
+		if (t_dat->map->turn_count%maxturn == 0){
 			printf("SAM: ZAP!!!\n");
 			
 
@@ -1313,7 +1341,11 @@ void* SAMZap(void* threadarg)
 				}
 			else {
 				zap = getRandom(0,1);
-				m_or_t = getRandom(0,1);
+
+				if (!t_dat->map->justMar)
+				{
+					m_or_t = getRandom(0,1);
+				} else { m_or_t = 0;}
 
 				switch (m_or_t)
 				{
@@ -1404,6 +1436,7 @@ void StartAPI(){
 		}   
 	}
 	
+	map2.justMar = false;
 	init2(&map2);
 	printMap2(&map2);	
 
@@ -1420,6 +1453,50 @@ void StartAPI(){
   	}
   	pthread_mutex_destroy(&map2_mutex); 
   }
+  else if (map.num_won == 1)
+	{
+	struct Workspace2 map2;
+
+	int won[4] = {0,0,0,0};
+	if (map.tty.won) { won[0] = 1;}
+	if (map.bun.won) { won[1] = 1;}
+	if (map.tz.won)  { won[2] = 1;}
+	if (map.mvin.won) { won[3] = 1;}
+
+	for (int i = 0; i < 4 ; i++)
+ 	{
+	   printf("%d", won[i]);
+	}
+	 printf("\n");
+	//assign id for toon x
+	for (int i = 0; i < 4; i++)
+	{
+	    if (won[i])
+		{
+			map2.tX.char_id = i;
+			break;
+		}   
+	}
+	
+	map2.justMar = true;
+
+	init2(&map2);
+	printMap2(&map2);	
+
+	
+	init_thread_data_2(thread_data2_array, &map2);
+	pthread_mutex_init(&map2_mutex, NULL);
+	pthread_create(&(thread_data2_array[0].thread_id), NULL, tXRun, (void *)(&thread_data2_array[0]));	
+	pthread_create(&(thread_data2_array[2].thread_id), NULL, SAMZap, (void *)(&thread_data2_array[2]));	
+	
+
+	
+  	pthread_join(thread_data2_array[0].thread_id,NULL);
+  	pthread_join(thread_data2_array[2].thread_id,NULL);
+
+  	pthread_mutex_destroy(&map2_mutex); 
+	
+	}
 
 }
 
