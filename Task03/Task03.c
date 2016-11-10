@@ -230,29 +230,31 @@ void runner_signal(thread_data *runner){
     printf("Cycle: %d\n",shared_t.cycle_t);
     // Check if Marvin
     if(runner->id == 3){
-      // Print runner name
-      printf("%s is moving.\n", runner->name);
       // Check if cycle % 12
       if(shared_t.cycle_t % 12 == 0){
         // Move Mountain
         move_mtn();
       }
-      // Move Marvin / Eliminate the competition (with or without the carrot)
-      do{
-        // Move
-        x = getRandom(0, 2) - 1 + runner->x;
-        y = getRandom(0, 2) - 1 + runner->y;
-      }while(!valid_move(runner->letter, x, y));
-      // check if carrot or competition to take/takedown
-      check_pos(runner, x, y);
-      update_pos(runner->letter, x, y, &runner->x, &runner->y);
-      if(shared_t.eliminated_t[0] == 0 && shared_t.eliminated_t[1] == 0 && shared_t.eliminated_t[2] == 0)
-      {
-        strcpy(shared_t.winner_t[shared_t.goal_t], runner->name); 
-        shared_t.goal_t = 3;
+      if(shared_t.goal_t != 3){
+        // Print runner name
+        printf("%s is moving.\n", runner->name);
+        // Move Marvin / Eliminate the competition (with or without the carrot)
+        do{
+          // Move
+          x = getRandom(0, 2) - 1 + runner->x;
+          y = getRandom(0, 2) - 1 + runner->y;
+        }while(!valid_move(runner->letter, x, y));
+        // check if carrot or competition to take/takedown
+        check_pos(runner, x, y);
+        update_pos(runner->letter, x, y, &runner->x, &runner->y);
+        if(shared_t.eliminated_t[0] == 1 && shared_t.eliminated_t[1] == 1 && shared_t.eliminated_t[2] == 1)
+        {
+          strcpy(shared_t.winner_t[shared_t.goal_t], runner->name); 
+          shared_t.goal_t = 3;
+        }
+        printf("\n");
+        print_map();
       }
-      printf("\n");
-      print_map();
     }
     // Not Marvin
     else{
@@ -394,6 +396,8 @@ int main(int argc, char *argv[]){
     // Create the threads for the Second Race
 
     // Join the threads from the Second Race
+
+    printf("The second winner is %s\n\n", shared_t.winner_t[1]);
   }
   pthread_mutex_destroy(&timeTravel_signal_mutex);
   printf("Threads destroyed\n");
