@@ -246,7 +246,11 @@ void runner_signal(thread_data *runner){
       // check if carrot or competition to take/takedown
       check_pos(runner, x, y);
       update_pos(runner->letter, x, y, &runner->x, &runner->y);
-      
+      if(shared_t.eliminated_t[0] == 0 && shared_t.eliminated_t[1] == 0 && shared_t.eliminated_t[2] == 0)
+      {
+        strcpy(shared_t.winner_t[shared_t.goal_t], runner->name); 
+        shared_t.goal_t = 3;
+      }
       printf("\n");
       print_map();
     }
@@ -271,8 +275,9 @@ void runner_signal(thread_data *runner){
     }
     // Check if won
     if(runner->x == shared_t.mtn_t[0] && runner->y == shared_t.mtn_t[1] && runner->carrot > 0){
-      shared_t.goal_t = 1;
-      strcpy(shared_t.winner_t[0], runner->name);
+      strcpy(shared_t.winner_t[shared_t.goal_t], runner->name);
+      shared_t.goal_t++;
+      shared_t.map[shared_t.mtn_t[0]][shared_t.mtn_t[1]] = 'F';
     }
 
     // Update goal
@@ -365,6 +370,10 @@ void *run_API(void *thread){
 
 }
 
+void *run2_API(void *thread){
+
+}
+
 // Main
 int main(int argc, char *argv[]){
   int i;
@@ -382,7 +391,11 @@ int main(int argc, char *argv[]){
   for(i = 0; i < 4; i++){
     pthread_join(thread[i].thread_id, NULL);
   }
+  if(shared_t.goal_t == 2){
+    // Create the threads for the Second Race
 
+    // Join the threads from the Second Race
+  }
   pthread_mutex_destroy(&timeTravel_signal_mutex);
   printf("Threads destroyed\n");
   // Print out winner
