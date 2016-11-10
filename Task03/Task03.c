@@ -36,7 +36,7 @@ struct Shared{
   int carrot_t[2][2];
   int carrot_holder_t[2];
   int mtn_t[2];
-  char winner_t[2][7];
+  char winner_t[2][7], winnerL_t[2];
   char map[5][5];
 }shared_t;
 
@@ -53,13 +53,12 @@ int getRandom(int rangeLow, int rangeHigh);
 void *run_API(void *thread);
 void *run2_API(void *thread);
 void runner_signal(thread_data *runner);
-void runner_signal2(thread_data *runner);			// Need to implement
+void runner_signal2(thread_data *runner);
 void init_data(thread_data *thread);
 void init_data2(thread_data2 *thread);
 void print_map();
-void print_map2();														// Need to implement
+void print_map2();
 bool valid_move(char c, int x, int y);
-bool valid_move2(char c, int x);							// Need to implement (maybe not needed)
 void check_pos(thread_data *runner, int x, int y);
 int check_person(int x, int y);
 void update_pos(char c, int xn, int yn, int *xo, int *yo);
@@ -106,6 +105,17 @@ void print_map(){
     }
   }
   printf("\n--------------------------\n");
+}
+
+void print_map2(){
+	int i, j;
+	for(i = 0; i < 2; i++){
+		printf("\n------------------------\n|");
+		for(j = 0; j < 10; j++){
+			printf("%c|", shared.map[i][j]);
+		}
+	}
+	printf("\n------------------------\n");
 }
 
 bool valid_move(char c, int x, int y){
@@ -238,6 +248,15 @@ void create_map(){
   }
 }
 
+void create_map2(){
+	int i, j;
+	for(i = 0; i < 2; i++){
+		for(j = 0; j < 10; j++){
+			shared.map[i][j] = ' ';
+		}
+	}
+}
+
 void runner_signal(thread_data *runner){
   // Lock it down
   pthread_mutex_lock(&timeTravel_signal_mutex);
@@ -296,6 +315,7 @@ void runner_signal(thread_data *runner){
     // Check if won
     if(runner->x == shared_t.mtn_t[0] && runner->y == shared_t.mtn_t[1] && runner->carrot > 0){
       strcpy(shared_t.winner_t[shared_t.goal_t], runner->name);
+      strcpy(shared_t.winnerL_t[shared_t.goal_t], runner->letter);
       shared_t.goal_t++;
       shared_t.map[shared_t.mtn_t[0]][shared_t.mtn_t[1]] = 'F';
     }
@@ -430,18 +450,20 @@ void init_data2(thread_data2 *thread){
   thread[0].id = 0;
   thread[0].condition = 2;
   thread[0].copy_goal = shared.goal;
-  //thread[0].letter = 'x';
+  thread[0].letter = shared_t.winnerL_t[0];
   thread[0].x = 0;
-  //strcpy(thread[0].name, "x");
+  strcpy(thread[0].name, shared_t.winner_t[0]);
+  shared.map[0][0] = thread[0].letter;
 
   thread[1].thread_id = 1;
   thread[1].id = 1;
   thread[1].condition = 0;
   thread[1].copy_goal = shared.goal;
-  //thread[1].letter = 'y';
+  thread[1].letter = shared_t.winnerL_t[1];
   thread[1].x = 0;
-  //strcpy(thread[1].name, "y");
-
+  strcpy(thread[1].name, shared_t.winner_t[1]);
+	shared.map[1][0] = thread[1].letter;
+	
   thread[2].thread_id = 2;
   thread[2].id = 2;
   thread[2].condition = 1;
@@ -498,6 +520,7 @@ int main(int argc, char *argv[]){
     pthread_join(thread[i].thread_id, NULL);
   }
   
+  printf("The winner is %s\n\n", shared_t.winner_t[0]);
   // Second Race
   if(shared_t.goal_t == 2){
     printf("The second winner is %s\n\n", shared_t.winner_t[1]);
@@ -517,6 +540,6 @@ int main(int argc, char *argv[]){
   pthread_mutex_destroy(&timeTravel_signal_mutex);
   printf("Threads destroyed\n");
   // Print out winner
-  printf("The winner is %s\n\n", shared_t.winner_t[0]);
+  printf("The ultimate winner is %s\n\n", shared.winner);
   return 0;
 }
