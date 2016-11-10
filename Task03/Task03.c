@@ -1,3 +1,8 @@
+//Author: Saw Xue Zheng and Corey Zalewski
+//Date  : 9 November 2016
+//Description : The ultimate race for Toons
+
+// TODO: Have at least two winners, toons can only pick up one carrot, and have a check to see if Marvin killed everyone. Implement the second race.
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,7 +29,7 @@ struct Shared{
   int carrot_t[2][2];
   int carrot_holder_t[2];
   int mtn_t[2];
-  char winner_t[7];  
+  char winner_t[2][7];
   char map[5][5];
 }shared_t;
 
@@ -101,6 +106,8 @@ bool valid_move(char c, int x, int y){
   {valid = false;}
   // check if bumping into other competition / if marvin
   else if(shared_t.map[x][y] != 'C' && shared_t.map[x][y] != ' ' && person != 3)
+  {valid = false;}
+  else if((shared_t.carrot_holder_t[0] == person || shared_t.carrot_holder_t[1] == person) && ((shared_t.carrot_t[0][0] == x && shared_t.carrot_t[0][1] == y) || (shared_t.carrot_t[1][0] == x &&    shared_t.carrot_t[1][1] == y)))
   {valid = false;}
 
   return valid;
@@ -265,7 +272,7 @@ void runner_signal(thread_data *runner){
     // Check if won
     if(runner->x == shared_t.mtn_t[0] && runner->y == shared_t.mtn_t[1] && runner->carrot > 0){
       shared_t.goal_t = 1;
-      strcpy(shared_t.winner_t, runner->name);
+      strcpy(shared_t.winner_t[0], runner->name);
     }
 
     // Update goal
@@ -289,6 +296,7 @@ void init_data(thread_data *thread){
   shared_t.carrot_t[0][0] = shared_t.carrot_t[0][1] = shared_t.carrot_t[1][0] = shared_t.carrot_t[1][1] = 0;
   shared_t.carrot_holder_t[0] = shared_t.carrot_holder_t[1] = -1;
   shared_t.mtn_t[0] = shared_t.mtn_t[1] = 0;
+  shared_t.exit_t = 0;
 
   // Initialize thread data
   thread[0].thread_id = 0;
@@ -348,7 +356,7 @@ void *run_API(void *thread){
   thread_data *runner = (thread_data*)thread;
   setup_time_seed();
 
-  while(!runner->copy_goal){
+  while(runner->copy_goal < 2){
     runner_signal(runner);
     sleep(2);
   }
@@ -378,6 +386,6 @@ int main(int argc, char *argv[]){
   pthread_mutex_destroy(&timeTravel_signal_mutex);
   printf("Threads destroyed\n");
   // Print out winner
-  printf("The winner is %s\n\n", shared_t.winner_t);
+  printf("The winner is %s\n\n", shared_t.winner_t[0]);
   return 0;
 }
