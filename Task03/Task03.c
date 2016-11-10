@@ -41,7 +41,7 @@ struct Shared{
 }shared_t;
 
 struct Shared2 {
-  int condition, goal, frozen[2];
+  int condition, goal, cycle, frozen[2];
   char winner[7], map[2][10];
 } shared;
 
@@ -53,7 +53,7 @@ int getRandom(int rangeLow, int rangeHigh);
 void *run_API(void *thread);
 void *run2_API(void *thread);
 void runner_signal(thread_data *runner);
-void runner_signal2(thread_data *runner);
+void runner_signal2(thread_data2 *runner);
 void init_data(thread_data *thread);
 void init_data2(thread_data2 *thread);
 void print_map();
@@ -315,7 +315,7 @@ void runner_signal(thread_data *runner){
     // Check if won
     if(runner->x == shared_t.mtn_t[0] && runner->y == shared_t.mtn_t[1] && runner->carrot > 0){
       strcpy(shared_t.winner_t[shared_t.goal_t], runner->name);
-      strcpy(shared_t.winnerL_t[shared_t.goal_t], runner->letter);
+      shared_t.winnerL_t[shared_t.goal_t] = runner->letter;
       shared_t.goal_t++;
       shared_t.map[shared_t.mtn_t[0]][shared_t.mtn_t[1]] = 'F';
     }
@@ -331,7 +331,7 @@ void runner_signal(thread_data *runner){
   pthread_mutex_unlock(&timeTravel_signal_mutex);
 }
 
-void runner_signal2(thread_data *runner){
+void runner_signal2(thread_data2 *runner){
 	pthread_mutex_lock(&timeTravel_signal_mutex);
 	// Check condition
 	if(runner->condition == shared.condition){
@@ -363,7 +363,7 @@ void runner_signal2(thread_data *runner){
 			}
 			// Check for win
 			if(runner->x == 9){
-				strcpy(shared.winner, runner.name);
+				strcpy(shared.winner, runner->name);
 				shared.goal = 1;
 			}
 		}
@@ -444,6 +444,7 @@ void init_data2(thread_data2 *thread){
   create_map2();
   shared.condition = 2;
   shared.goal = 0;
+  shared.cycle = 0;
   shared.frozen[0] = shared.frozen[1] = 0;
 
   thread[0].thread_id = 0;
@@ -491,7 +492,7 @@ void *run_API(void *thread){
 }
 
 void *run2_API(void *thread){
-	thread_data2 *runner = (thread_data*)thread;
+	thread_data2 *runner = (thread_data2*)thread;
 	setup_time_seed();
 	
 	while(!runner->copy_goal){
@@ -499,7 +500,7 @@ void *run2_API(void *thread){
 		sleep(2);
 	}
 	
-	pthreat_exit(NULL):
+	pthread_exit(NULL);
 }
 
 // Main
@@ -529,12 +530,12 @@ int main(int argc, char *argv[]){
   	init_data2(&thread2);
     // Create the threads for the Second Race
 		for(i = 0; i < 3; i++){
-			thread[i].thread_id = i;
-			pthread_crate(&(thread2[i].thread_id, NULL, run2_API, (void *)(&thread2[i]));
+			thread2[i].thread_id = i;
+			pthread_create(&(thread2[i].thread_id), NULL, run2_API, (void *)(&thread2[i]));
 		}
     // Join the threads from the Second Race
     for(i = 0; i < 3; i++){
-    	pthraed_join(thread[i].thrad_id, NULL);
+    	pthread_join(thread2[i].thread_id, NULL);
 		}
   }
   pthread_mutex_destroy(&timeTravel_signal_mutex);
