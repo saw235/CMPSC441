@@ -21,6 +21,13 @@ typedef struct thread{
   
 } thread_data;
 
+typedef struct thread2{
+  pthread_t thread_id;
+  int id;
+  int condition, s, copy_goal, copy_cycle;
+  char name[7], letter;
+} thread_data2;
+
 struct Shared{
   int condition_t;
   int goal_t;
@@ -33,6 +40,11 @@ struct Shared{
   char map[5][5];
 }shared_t;
 
+struct Shared2 {
+  int condition, goal, frozen[2];
+  char winner[7], map[2][10];
+} shared;
+
 pthread_mutex_t timeTravel_signal_mutex;
 
 // Function Headers
@@ -41,8 +53,11 @@ int getRandom(int rangeLow, int rangeHigh);
 void *run_API(void *thread);
 void runner_signal(thread_data *runner);
 void init_data(thread_data *thread);
+void init_data2(thread_data2 *thread);		// Need to implemet
 void print_map();
+void print_map2();				// Need to implement
 bool valid_move(char c, int x, int y);
+bool valid_move2(char c, int x);		// Need to implement (maybe not needed)
 void check_pos(thread_data *runner, int x, int y);
 int check_person(int x, int y);
 void update_pos(char c, int xn, int yn, int *xo, int *yo);
@@ -50,6 +65,7 @@ void rand_pos(int *x, int *y);
 void move_mtn();
 void init_pos(thread_data *thread);
 void create_map();
+void create_map2();				// Need to implement
 
 // Function Delcarations
 void setup_time_seed(){
@@ -356,6 +372,39 @@ void init_data(thread_data *thread){
   print_map();
 }
 
+void init_data2(thread_data2 *thread){
+  create_map2();
+  shared.condition = 2;
+  shared.goal = 0;
+  shared.frozen[0] = shared.frozen[1] = 0;
+
+  thread[0].thread_id = 0;
+  thread[0].id = 0;
+  thread[0].condition = 2;
+  thread[0].copy_goal = shared.goal;
+  thread[0].copy_cycle = shared.cycle;
+  thread[0].letter = 'x';
+  thread[0].x = 0;
+  strcpy(thread[0].name, "x");
+
+  thread[1].thread_id = 1;
+  thread[1].id = 1;
+  thread[1].condition = 0;
+  thread[1].copy_goal = shared.goal;
+  thread[1].copy_cycle = shared.cycle;
+  thread[1].letter = 'y';
+  thread[1].x = 0;
+  strcpy(thread[1].name, "y");
+
+  thread[2].thread_id = 2;
+  thread[2].id = 2;
+  thread[2].condition = 1;
+  thread[2].copy_goal = shared.goal;
+  thread[2].copy_cycle = shared.cycle;
+  thread[2].letter = 'x';
+  thread[2].x = 0;
+  strcpy(thread[2].name, "x");
+}
 
 // API
 void *run_API(void *thread){
