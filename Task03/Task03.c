@@ -301,7 +301,6 @@ void init_data(thread_data *thread){
   shared_t.carrot_t[0][0] = shared_t.carrot_t[0][1] = shared_t.carrot_t[1][0] = shared_t.carrot_t[1][1] = 0;
   shared_t.carrot_holder_t[0] = shared_t.carrot_holder_t[1] = -1;
   shared_t.mtn_t[0] = shared_t.mtn_t[1] = 0;
-  shared_t.exit_t = 0;
 
   // Initialize thread data
   thread[0].thread_id = 0;
