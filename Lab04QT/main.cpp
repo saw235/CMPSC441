@@ -24,13 +24,13 @@ int main(int argc, char *argv[])
 
     // Connect from C++ to QML
     QObject::connect(&myMovie, SIGNAL(surpriseMovie(QVariant)),
-                     window, SLOT(updateSurprise(QString)));
+                     window, SLOT(updateSurprise(QVariant)));
     QObject::connect(&myMovie, SIGNAL(watchedTime(QVariant)),
-                     window, SLOT(updateWatched(QString)));
+                     window, SLOT(updateWatched(QVariant)));
     QObject::connect(&myMovie, SIGNAL(currentTime(QVariant)),
-                     window, SLOT(updateCurrent(QString)));
+                     window, SLOT(updateCurrent(QVariant)));
     QObject::connect(&myMovie, SIGNAL(price(QVariant)),
-                     window, SLOT(updatePrice));
+                     window, SLOT(updatePrice(QVariant)));
 
     return app.exec();
 }

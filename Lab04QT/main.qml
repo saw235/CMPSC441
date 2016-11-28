@@ -8,7 +8,9 @@ Window {
     visible: true
     width: 376
     height: 387
+    opacity: 0.9
     title: qsTr("Lab 04")
+
 
     // signals
     signal okPressed(string msg);
@@ -49,6 +51,7 @@ Window {
                 width: 91
                 height: 14
                 text: qsTr("Surprise Movie:")
+                z: 4
                 font.pixelSize: 12
             }
 
@@ -57,6 +60,7 @@ Window {
                 x: 21
                 y: 210
                 text: qsTr("Last Time Watched:")
+                z: 1
                 font.pixelSize: 12
             }
 
@@ -65,6 +69,7 @@ Window {
                 x: 21
                 y: 246
                 text: qsTr("Current Time:")
+                z: 5
                 font.pixelSize: 12
             }
 
@@ -75,6 +80,7 @@ Window {
                 width: 186
                 height: 20
                 text: qsTr("")
+                z: 6
                 font.pixelSize: 12
             }
 
@@ -104,6 +110,7 @@ Window {
                 width: 229
                 height: 20
                 text: "Enter Number"
+                z: 3
                 cursorVisible: false
                 inputMask: ""
                 passwordCharacter: qsTr("•")
@@ -153,13 +160,23 @@ Window {
                 text: qsTr("")
                 font.pixelSize: 12
             }
+
+            Image {
+                id: image1
+                x: 0
+                y: 0
+                width: 376
+                height: 387
+                z: -1
+                source: "movie.jpg"
+            }
         }
     }
 
-//    MainForm {
-//        anchors.fill: parent
-//        mouseArea.onClicked: {
-//            console.log(qsTr('Clicked on background. Text: "' + textEdit.text + '"'))
-//        }
-//    }
+    //    MainForm {
+    //        anchors.fill: parent
+    //        mouseArea.onClicked: {
+    //            console.log(qsTr('Clicked on background. Text: "' + textEdit.text + '"'))
+    //        }
+    //    }
 }
