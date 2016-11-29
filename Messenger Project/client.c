@@ -25,7 +25,7 @@ int main()
   serv_addr.sin_port = htons(8888);
 
   if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) <0)
-	{ printf("Error connecting.\n");}
+	{ printf("Error connecting.\n"); return 0;}
   else { printf("Successfully connect to server.\n");}
 
   while(1)

@@ -9,7 +9,7 @@
 #include <pthread.h>
 
 #define MAX_SIZE 50
-#define NUM_CLIENT 5
+#define NUM_CLIENT 1
 
 
 int sock_desc, clilen, n;
