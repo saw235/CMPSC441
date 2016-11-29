@@ -44,123 +44,6 @@ Window {
             anchors.topMargin: 0
             anchors.fill: parent
 
-            Text {
-                id: movieLabel
-                x: 21
-                y: 138
-                width: 91
-                height: 14
-                text: qsTr("Surprise Movie:")
-                z: 4
-                font.pixelSize: 12
-            }
-
-            Text {
-                id: watchedLabel
-                x: 21
-                y: 210
-                text: qsTr("Last Time Watched:")
-                z: 1
-                font.pixelSize: 12
-            }
-
-            Text {
-                id: currTimeLabel
-                x: 21
-                y: 246
-                text: qsTr("Current Time:")
-                z: 5
-                font.pixelSize: 12
-            }
-
-            TextEdit {
-                id: movieTxt
-                x: 150
-                y: 135
-                width: 186
-                height: 20
-                text: qsTr("")
-                z: 6
-                font.pixelSize: 12
-            }
-
-            TextEdit {
-                id: watchedTxt
-                x: 150
-                y: 207
-                width: 186
-                height: 20
-                text: qsTr("")
-                font.pixelSize: 12
-            }
-
-            TextEdit {
-                id: currTxt
-                x: 150
-                y: 243
-                width: 186
-                height: 20
-                font.pixelSize: 12
-            }
-
-            TextInput {
-                id: input
-                x: 21
-                y: 56
-                width: 229
-                height: 20
-                text: "Enter Number"
-                z: 3
-                cursorVisible: false
-                inputMask: ""
-                passwordCharacter: qsTr("•")
-                horizontalAlignment: Text.AlignLeft
-                transformOrigin: Item.Center
-                font.pixelSize: 12
-            }
-
-            Button {
-                id: okBtn
-                x: 273
-                y: 56
-                width: 63
-                height: 20
-                text: qsTr("Ok")
-                onClicked: {
-                    window1.okPressed(input.text);
-                }
-            }
-
-            Button {
-                id: quitBtn
-                x: 273
-                y: 322
-                width: 63
-                height: 21
-                text: qsTr("Quit")
-                onClicked:{
-                    Qt.quit();
-                }
-            }
-
-            Text {
-                id: price
-                x: 21
-                y: 172
-                text: qsTr("Rental Price:")
-                font.pixelSize: 12
-            }
-
-            TextEdit {
-                id: priceTxt
-                x: 150
-                y: 169
-                width: 186
-                height: 20
-                text: qsTr("")
-                font.pixelSize: 12
-            }
-
             Image {
                 id: image1
                 x: 0
@@ -169,6 +52,156 @@ Window {
                 height: 387
                 z: -1
                 source: "movie.jpg"
+
+                TextEdit {
+                    id: priceTxt
+                    x: 150
+                    y: 169
+                    width: 186
+                    height: 20
+                    color: "#f71111"
+                    text: qsTr("")
+                    readOnly: true
+                    font.bold: true
+                    font.pixelSize: 12
+                }
+
+                Text {
+                    id: price
+                    x: 21
+                    y: 172
+                    color: "#f71111"
+                    text: qsTr("Rental Price:")
+                    style: Text.Sunken
+                    font.bold: true
+                    font.pixelSize: 12
+                }
+
+                Button {
+                    id: quitBtn
+                    x: 273
+                    y: 322
+                    width: 63
+                    height: 21
+                    text: qsTr("Quit")
+                    onClicked:{
+                        Qt.quit();
+                    }
+                }
+
+                Button {
+                    id: okBtn
+                    x: 273
+                    y: 56
+                    width: 63
+                    height: 20
+                    text: qsTr("Ok")
+                    onClicked: {
+                        window1.okPressed(input.text);
+                    }
+                }
+
+                TextInput {
+                    id: input
+                    x: 21
+                    y: 56
+                    width: 229
+                    height: 20
+                    color: "#f71111"
+                    text: "Enter Number Here"
+                    font.bold: true
+                    z: 3
+                    cursorVisible: false
+                    inputMask: ""
+                    passwordCharacter: qsTr("•")
+                    horizontalAlignment: Text.AlignLeft
+                    transformOrigin: Item.Center
+                    font.pixelSize: 18
+                }
+
+                TextEdit {
+                    id: currTxt
+                    x: 150
+                    y: 243
+                    width: 186
+                    height: 20
+                    color: "#f71111"
+                    readOnly: true
+                    font.bold: true
+                    font.pixelSize: 12
+                }
+
+                TextEdit {
+                    id: watchedTxt
+                    x: 150
+                    y: 207
+                    width: 186
+                    height: 20
+                    color: "#f71111"
+                    text: qsTr("")
+                    readOnly: true
+                    font.bold: true
+                    font.pixelSize: 12
+                }
+
+                TextEdit {
+                    id: movieTxt
+                    x: 150
+                    y: 135
+                    width: 186
+                    height: 20
+                    color: "#f71111"
+                    text: qsTr("")
+                    readOnly: true
+                    font.bold: true
+                    z: 6
+                    font.pixelSize: 12
+                }
+
+                Text {
+                    id: currTimeLabel
+                    x: 21
+                    y: 246
+                    color: "#f71111"
+                    text: qsTr("Current Time:")
+                    font.bold: true
+                    z: 5
+                    font.pixelSize: 12
+                }
+
+                Text {
+                    id: watchedLabel
+                    x: 21
+                    y: 210
+                    color: "#f71111"
+                    text: qsTr("Last Time Watched:")
+                    font.bold: true
+                    z: 1
+                    font.pixelSize: 12
+                }
+
+                Text {
+                    id: movieLabel
+                    x: 21
+                    y: 138
+                    width: 91
+                    height: 14
+                    color: "#f71111"
+                    text: qsTr("Surprise Movie:")
+                    font.bold: true
+                    z: 4
+                    font.pixelSize: 12
+                }
+
+
+
+
+
+
+
+
+
+
             }
         }
     }

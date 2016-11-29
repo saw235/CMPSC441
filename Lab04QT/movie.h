@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QDebug>
+#include <QProcess>
 
 class Movie : public QObject
 {
@@ -23,13 +24,14 @@ private:
         void readFile();
         int getRandom(int rangeLow, int rangeHigh);
         void setup_seed();
+        void runScript();
         struct movie_data{
             QString title;
             QString lastWatched;
             QString rentalPrice;
         };
-        movie_data movie_odd[10];
-        movie_data movie_even[10];
+        movie_data movie_odd[20];
+        movie_data movie_even[20];
 
         QString movieTitle;
         QString watchedTme;

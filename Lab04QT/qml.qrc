@@ -1,5 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>movie.jpg</file>
+        <file>input.txt</file>
+        <file>time.sh</file>
     </qresource>
 </RCC>
