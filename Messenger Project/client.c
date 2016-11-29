@@ -28,19 +28,23 @@ int main()
 	{ printf("Error connecting.\n");}
   else { printf("Successfully connect to server.\n");}
 
-  printf("Please enter message: ");
+  while(1)
+  {
+  	printf("Please enter message: ");
 
-  bzero(buffer, 256);
-  fgets(buffer, 255, stdin);
+ 	 bzero(buffer, 256);
+  	fgets(buffer, 255, stdin);
 
-  n = write(sockfd, buffer, strlen(buffer));
+ 	 n = write(sockfd, buffer, strlen(buffer));
  
-  bzero(buffer, 256);
+  	bzero(buffer, 256);
   
-  n = read(sockfd, buffer, 255);
-
-  printf("\n%s", buffer);
-
+  	n = read(sockfd, buffer, 255);
+	
+  	printf("\n%s", buffer);
+	
+	if (strcmp(buffer, "-1\n") == 0) {break;}
+   }
 
  return 0;  
 

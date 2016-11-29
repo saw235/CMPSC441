@@ -12,39 +12,51 @@
 #define NUM_CLIENT 5
 
 
-int sock_desc, newsockfd, clilen, n;
-char buffer[256];
+int sock_desc, clilen, n;
 struct sockaddr_in serv_addr, cli_addr;
 
 void * connection(void* threadid)
 {
 
 
-	listen(sock_desc, NUM_CLIENT);
-
+	char buffer[256];
+	int newsockfd;	
 	clilen = sizeof(cli_addr);
+	
+
 	newsockfd = accept(sock_desc, (struct sockaddr *) &cli_addr, &clilen);
 	
 	if (newsockfd < 0) printf("ERROR on accepting connection.\n");
 
-	bzero(buffer, 256);
-	n = read(newsockfd, buffer, 255);
+	//once accepted connection, waits for message from client 
+	while(1)
+	{	
 
-	if ( n < 0) printf("Error reading from socket.\n");
+		bzero(buffer, 256);
+		n = read(newsockfd, buffer, 255);
 
-	printf("Here is the message: %s", buffer);
+		if ( n < 0) printf("Error reading from socket.\n");
 
-	n = write(newsockfd, "I got your message\n", 19);
-	if (n < 0) printf("Error writting to client socket.\n");
+		printf("Here is the message: %s", buffer);
 
+
+		if (strcmp(buffer, "-1\n") == 0) {
+			n = write(newsockfd, "-1\n", 3);		
+			break;
+		} else
+		{
+			n = write(newsockfd, "I got your message\n", 19);
+			if (n < 0) printf("Error writting to client socket.\n");
+		}
+
+
+	}
 	printf("Exiting connection %d\n", (int) threadid);
 	pthread_exit(NULL);
 }
 
 int main()
 {
-
-
 
 
 	if((sock_desc = socket(AF_INET,SOCK_STREAM,0))  < 0 )
@@ -56,10 +68,16 @@ int main()
 	serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	serv_addr.sin_port = htons(8888);
 
+
+	//bind address and port to the socket
 	if (bind(sock_desc, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) <0)
 		printf("ERROR on binding.\n");
 
 	pthread_t thread[2];
+
+
+	listen(sock_desc, NUM_CLIENT); //start listening on the server socket end.
+
 
 	for ( int i = 0;  i < 2; i++)
 	{
