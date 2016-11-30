@@ -5,15 +5,53 @@
 #include <netdb.h>
 #include <string.h>
 #include <unistd.h>
+#include <pthread.h>
+#include <stdbool.h>
 
+bool b_exit = false;
+char rbuffer[256];
+char wbuffer[256];
+int sockfd;
+int n;
+void *read_handler(void * threadid)
+{
+	while(1)
+	{
+		if (b_exit) {pthread_exit(NULL);}
+		
+		bzero(rbuffer, 256);
+		n = read(sockfd, rbuffer, 255);
+		if (n < 0 ) { printf("Error getting messages from server");}
+		else { printf("\n%s", rbuffer); }
+		
+	}	
+}
+void *write_handler(void * sock)
+{
+
+	while(1)
+	{
+		if (b_exit) {pthread_exit(NULL);}
+		printf("\nPlease enter message: ");
+
+	 	bzero(wbuffer, 256);
+  		fgets(wbuffer, 255, stdin);
+
+
+ 		n = write(sockfd, wbuffer, strlen(wbuffer));
+	}
+}
 
 int main()
 {
-  int sockfd, n;
+
   struct sockaddr_in serv_addr;
   struct hostent *server;
 
-  char buffer[256];
+  pthread_t read_thread;
+  pthread_t write_thread;
+
+  
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd < 0) printf("Error opening socket.\n");
@@ -28,22 +66,13 @@ int main()
 	{ printf("Error connecting.\n"); return 0;}
   else { printf("Successfully connect to server.\n");}
 
-  while(1)
+  pthread_create(&read_thread, NULL, read_handler, NULL);
+  pthread_create(&write_thread, NULL, write_handler, (void *) &sockfd);  
+while(1)
   {
-  	printf("Please enter message: ");
 
- 	 bzero(buffer, 256);
-  	fgets(buffer, 255, stdin);
 
- 	 n = write(sockfd, buffer, strlen(buffer));
- 
-  	bzero(buffer, 256);
-  
-  	n = read(sockfd, buffer, 255);
-	
-  	printf("\n%s", buffer);
-	
-	if (strcmp(buffer, "-1\n") == 0) {break;}
+	if (strcmp(rbuffer, "-1\n") == 0) {b_exit = true; break;}
    }
 
  return 0;  
