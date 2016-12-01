@@ -35,7 +35,7 @@ public slots:
 
 private:
     static void  *read_handler(void *threadid);
-    static void  *write_handler(void *threadid);
+    //static void  *write_handler(void *threadid);
     SSL_CTX *InitCTX(void);
 
     struct sockaddr_in serv_addr;
