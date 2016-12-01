@@ -10,7 +10,7 @@ GuiHandler::GuiHandler(QObject *parent) :
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
-        printf("Error opening socket.\n");
+        emit errorMsg("Error opening socket");
 
     bzero((char *)&serv_addr, sizeof(serv_addr));
 }
@@ -27,13 +27,15 @@ void GuiHandler::connectToServer(QString ip, int port){
     serv_addr.sin_port = htons(port);     // change this to a variable to get from GUI
 
     // connect socket to server
-    if (connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+    if (::connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
         printf("Error connecting.\n");
         qDebug() << "Error connecting";
-        return 0;
+        emit errorMsg("Error connecting");
+        return;
     } else {
         printf("Successfully connect to server.\n");
         qDebug() << "Successfull connection";
+        emit errorMsg("Successfully connect to server");
     }
 
     // bind layer and socket together
@@ -58,11 +60,13 @@ void GuiHandler::connectToServer(QString ip, int port){
 
 void GuiHandler::disconnect(){
     sendMsg("-1");  // HEHEHEHE
+    emit errorMsg("Disconnected from server");
 }
 
 void GuiHandler::sendMsg(QString msg){
     QByteArray ba = msg.toLatin1();
-    wbuffer = ba.data();
+    //wbuffer = ba.data();
+    strcpy(wbuffer, ba.data());
     n = SSL_write(ssl, wbuffer, strlen(wbuffer));
 }
 
@@ -76,6 +80,7 @@ void *GuiHandler::read_handler(void *threadid) {
     n = SSL_read(ssl, rbuffer, 255);
     if (n < 0) {
       printf("Error getting messages from server");
+      emit errorMsg("Error getting messages from server");
     } else {
       printf("\n%s", rbuffer);
       emit newMsg(rbuffer); // send the message to the GUI
