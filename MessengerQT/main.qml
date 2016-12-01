@@ -10,7 +10,7 @@ Window {
     title: qsTr("Messenger Client")
 
     // Signals
-    signal connectToServer(string ip, string port);     // connect to server
+    signal connectToServer(string ip, int port);     // connect to server
     signal disconnect();                                // disconnect to server
     signal sendMsg(string msg);                         // send message
 
