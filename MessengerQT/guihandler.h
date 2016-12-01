@@ -25,8 +25,8 @@ public:
     explicit GuiHandler(QObject *parent = 0);
 
 signals:
-    void errorMsg(QString e);
-    void newMsg(QString msg);
+    void errorMsg(QVariant e);
+    void newMsg(QVariant msg);
 
 public slots:
     void connectToServer(QString ip, int port);
