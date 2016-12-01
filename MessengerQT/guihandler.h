@@ -27,11 +27,13 @@ public:
 signals:
     void errorMsg(QVariant e);
     void newMsg(QVariant msg);
+    void connectionState(QVariant state);
 
 public slots:
     void connectToServer(QString ip, int port);
     void disconnect();
     void sendMsg(QString msg);
+    void getConState();
 
 private:
     static void  *read_handler(void *threadid);

@@ -13,6 +13,7 @@ Window {
     signal connectToServer(string ip, int port);     // connect to server
     signal disconnect();                                // disconnect to server
     signal sendMsg(string msg);                         // send message
+    signal getConState();
 
     // Slots
     function incomingMsg(msg){                   // incoming message
@@ -23,6 +24,16 @@ Window {
         errorField.text = e;
 
 
+    }
+
+    function conState(state){
+        if(state){
+            connectBtn.text = "Disconnect";
+        }
+        else{
+            //clientWindow.disconnect();
+            connectBtn.text = "Connect";
+        }
     }
 
     Rectangle {
@@ -95,15 +106,8 @@ Window {
                 y: 37
                 text: qsTr("Connect")
                 onClicked: {
-                    if(connectBtn.text == "Connect"){
-                        clientWindow.connectToServer(ipInput.text, portInput.text);
-                        connectBtn.text = "Disconnect";
-                    }
-                    else if(connectBtn.text == "Disconnect"){
-                        clientWindow.disconnect();
-                        connectBtn.text = "Connect";
-                    }
-
+                    clientWindow.connectToServer(ipInput.text, portInput.text);
+                    clientWindow.getConState();
                 }
             }
 

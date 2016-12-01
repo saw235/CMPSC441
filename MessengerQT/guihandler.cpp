@@ -25,9 +25,9 @@ void GuiHandler::connectToServer(QString ip, int port){
 
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
-        emit errorMsg("Error opening socket");
+       { emit errorMsg("Error opening socket");return;}
     if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, NULL, sizeof(int)) < 0)
-      {printf("setsockopt(SO_REUSEADDR) failed");}
+      {printf("setsockopt(SO_REUSEADDR) failed"); return;}
 
     bzero((char *)&serv_addr, sizeof(serv_addr));
 
@@ -144,4 +144,8 @@ SSL_CTX *GuiHandler::InitCTX(void) {
 
   // return SSL context
   return ctx;
+}
+
+void GuiHandler::getConState(){
+    emit this->connectionState(this->connected);
 }

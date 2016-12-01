@@ -23,10 +23,12 @@ int main(int argc, char *argv[])
     QObject::connect(window, SIGNAL(connectToServer(QString, int)), &handler, SLOT(connectToServer(QString, int)));
     QObject::connect(window, SIGNAL(disconnect()), &handler, SLOT(disconnect()));
     QObject::connect(window, SIGNAL(sendMsg(QString)), &handler, SLOT(sendMsg(QString)));
+    QObject::connect(window, SIGNAL(getConState()), &handler, SLOT(getConState()));
 
     // Connect Handler to GUI
     QObject::connect(&handler, SIGNAL(newMsg(QVariant)), window, SLOT(incomingMsg(QVariant)));
     QObject::connect(&handler, SIGNAL(errorMsg(QVariant)), window, SLOT(error(QVariant)));
+    QObject::connect(&handler, SIGNAL(connectionState(QVariant)), window, SLOT(conState(QVariant)));
 
 
 
