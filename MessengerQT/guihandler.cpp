@@ -31,12 +31,12 @@ void GuiHandler::connectToServer(QString ip, int port){
         printf("Error connecting.\n");
         qDebug() << "Error connecting";
         emit errorMsg("Error connecting");
-        return;
+        //return;
     } else {
         printf("Successfully connect to server.\n");
         qDebug() << "Successfull connection";
         emit errorMsg("Successfully connect to server");
-    }
+
 
     // bind layer and socket together
     ret = SSL_set_fd(ssl, sockfd);
@@ -56,6 +56,7 @@ void GuiHandler::connectToServer(QString ip, int port){
 
     pthread_create(&read_thread, NULL, read_handler, (void*)this);
     //pthread_create(&write_thread, NULL, write_handler, (void *)this);
+    }
 }
 
 void GuiHandler::disconnect(){
@@ -83,7 +84,7 @@ void *GuiHandler::read_handler(void *threadid) {
       printf("Error getting messages from server");
       emit g->errorMsg("Error getting messages from server");
     } else {
-      printf("\n%s", g->rbuffer);
+      //printf("\n%s", g->rbuffer);
       emit g->newMsg(g->rbuffer); // send the message to the GUI
     }
   }

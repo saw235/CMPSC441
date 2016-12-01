@@ -21,10 +21,10 @@ Window {
 
     function error(e){                          // error messges (connecting to server)
         errorField.text = e;
-        if(e === "connected"){
+        if(e === "Successfully connect to server"){
             //pane1.visible = true;
             connectBtn.text = "Disconnect";
-        }else if(e === "disconnected"){
+        }else if(e === "Disconnected from server"){
             //pane1.visible = false;
             connectBtn.text = "Connect";
         }
@@ -118,6 +118,7 @@ Window {
                 y: 424
                 text: qsTr("Quit")
                 onClicked:{
+                    clientWindow.disconnect();
                     Qt.quit();
                 }
             }
@@ -161,9 +162,9 @@ Window {
                         y: 0
                         width: 595
                         height: 217
-                        text: qsTr("Text Area")
+                        //text: qsTr("Text Area")
                         wrapMode: TextArea.Wrap
-                        //readOnly: true
+                        readOnly: true
                     }
                     ScrollBar.vertical: ScrollBar {}
                 }
