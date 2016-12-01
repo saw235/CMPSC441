@@ -53,6 +53,7 @@ private:
     int sockfd;
     int n;
 
+    bool connected;
 
 };
 

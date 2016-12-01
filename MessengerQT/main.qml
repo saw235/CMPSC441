@@ -21,13 +21,7 @@ Window {
 
     function error(e){                          // error messges (connecting to server)
         errorField.text = e;
-        if(e === "connected"){
-            //pane1.visible = true;
-            connectBtn.text = "Disconnect";
-        }else if(e === "disconnected"){
-            //pane1.visible = false;
-            connectBtn.text = "Connect";
-        }
+
     }
 
     Rectangle {
@@ -102,13 +96,13 @@ Window {
                 onClicked: {
                     if(connectBtn.text == "Connect"){
                         clientWindow.connectToServer(ipInput.text, portInput.text);
+                        connectBtn.text = "Disconnect";
                     }
                     else if(connectBtn.text == "Disconnect"){
                         clientWindow.disconnect();
+                        connectBtn.text = "Connect";
                     }
-                    else{
-                        connectBtn.text = "Connect"
-                    }
+
                 }
             }
 
@@ -118,6 +112,8 @@ Window {
                 y: 424
                 text: qsTr("Quit")
                 onClicked:{
+
+                    clientWindow.disconnect();
                     Qt.quit();
                 }
             }
