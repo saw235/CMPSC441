@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     QObject::connect(window, SIGNAL(sendMsg(QString)), &handler, SLOT(sendMsg(QString)));
 
     // Connect Handler to GUI
-    QObject::connect(&handler, SIGNAL(newMsg(QString)), window, SLOT(incomingMsg(QString)));
-    QObject::connect(&handler, SIGNAL(errorMsg(QString)), window, SLOT(error(QString)));
+    QObject::connect(&handler, SIGNAL(newMsg(QVariant)), window, SLOT(incomingMsg(QVariant)));
+    QObject::connect(&handler, SIGNAL(errorMsg(QVariant)), window, SLOT(error(QVariant)));
 
 
 

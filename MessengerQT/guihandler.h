@@ -25,8 +25,8 @@ public:
     explicit GuiHandler(QObject *parent = 0);
 
 signals:
-    void errorMsg(QString e);
-    void newMsg(QString msg);
+    void errorMsg(QVariant e);
+    void newMsg(QVariant msg);
 
 public slots:
     void connectToServer(QString ip, int port);
@@ -35,7 +35,7 @@ public slots:
 
 private:
     static void  *read_handler(void *threadid);
-    static void  *write_handler(void *threadid);
+    //static void  *write_handler(void *threadid);
     SSL_CTX *InitCTX(void);
 
     struct sockaddr_in serv_addr;
