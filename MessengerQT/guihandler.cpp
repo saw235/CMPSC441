@@ -22,25 +22,20 @@ GuiHandler::GuiHandler(QObject *parent) :
 void GuiHandler::connectToServer(QString ip, int port){
 
     b_exit = false;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    getaddrinfo(ip.toUtf8().constData(), "3409", &hints, &res);
+    sockfd = socket(res->ai_family,res->ai_socktype, res->ai_protocol);
     if (sockfd < 0)
        { emit errorMsg("Error opening socket");return;}
     if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, NULL, sizeof(int)) < 0)
       {printf("setsockopt(SO_REUSEADDR) failed");}
 
-    bzero((char *)&serv_addr, sizeof(serv_addr));
-
-
-
-    // set server address and port
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_addr.s_addr = inet_addr(ip.toUtf8().constData());
-    //serv_addr.sin_addr.s_addr = *(long *)(host->h_addr); //change to inet_addr(ipaadress_string);  such as "168.0.1.2"
-    serv_addr.sin_port = htons(port);     // change this to a variable to get from GUI
 
     // connect socket to server
-    if (::connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
+    if (::connect(sockfd, res->ai_addr, res->ai_addrlen)) {
         //printf("Error connecting.\n");
         qDebug() << "Error connecting";
         emit errorMsg("Error connecting");

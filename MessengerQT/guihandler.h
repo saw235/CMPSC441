@@ -42,6 +42,9 @@ private:
 
     struct sockaddr_in serv_addr;
     struct hostent *host;
+    struct addrinfo hints, *res;
+
+
     SSL_CTX *ctx;
     X509 *cert;
     int server;
