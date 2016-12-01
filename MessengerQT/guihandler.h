@@ -46,12 +46,12 @@ private:
     int ret;
     pthread_t read_thread;
     pthread_t write_thread;
-    static bool b_exit;
-    static char rbuffer[256];
+    bool b_exit;
+    char rbuffer[256];
     char wbuffer[256];
-    static SSL *ssl;
+    SSL *ssl;
     int sockfd;
-    static int n;
+    int n;
 
 
 };

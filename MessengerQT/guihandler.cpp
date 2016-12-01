@@ -54,7 +54,7 @@ void GuiHandler::connectToServer(QString ip, int port){
 
     // printf("Connected with %s encryption\n", SSL_get_cipher(ssl));
 
-    pthread_create(&read_thread, NULL, read_handler, NULL);
+    pthread_create(&read_thread, NULL, read_handler, (void*)this);
     //pthread_create(&write_thread, NULL, write_handler, (void *)&sockfd);
 }
 
@@ -71,19 +71,20 @@ void GuiHandler::sendMsg(QString msg){
 }
 
 void *GuiHandler::read_handler(void *threadid) {
-  while (1) {
-    if (b_exit) {
+   GuiHandler *g = (GuiHandler *) threadid;
+   while (1) {
+    if (g->b_exit) {
       pthread_exit(NULL);
     }
 
-    bzero(rbuffer, 256);
-    n = SSL_read(ssl, rbuffer, 255);
-    if (n < 0) {
+    bzero(g->rbuffer, 256);
+    g->n = SSL_read(g->ssl, g->rbuffer, 255);
+    if (g->n < 0) {
       printf("Error getting messages from server");
-      emit errorMsg("Error getting messages from server");
+      emit g->errorMsg("Error getting messages from server");
     } else {
-      printf("\n%s", rbuffer);
-      emit newMsg(rbuffer); // send the message to the GUI
+      printf("\n%s", g->rbuffer);
+      emit g->newMsg(g->rbuffer); // send the message to the GUI
     }
   }
 }
