@@ -22,6 +22,7 @@ Window {
     function error(e){                          // error messges (connecting to server)
         errorField.text = e;
 
+
     }
 
     Rectangle {
@@ -113,8 +114,8 @@ Window {
                 text: qsTr("Quit")
                 onClicked:{
 
-                    clientWindow.disconnect();
-                    Qt.quit();
+                clientWindow.disconnect();
+                Qt.quit();
                 }
             }
 
@@ -157,9 +158,9 @@ Window {
                         y: 0
                         width: 595
                         height: 217
-                        text: qsTr("Text Area")
+                        //text: qsTr("Text Area")
                         wrapMode: TextArea.Wrap
-                        //readOnly: true
+                        readOnly: true
                     }
                     ScrollBar.vertical: ScrollBar {}
                 }
