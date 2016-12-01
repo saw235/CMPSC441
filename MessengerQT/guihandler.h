@@ -51,7 +51,7 @@ private:
     char wbuffer[256];
     SSL *ssl;
     int sockfd;
-        int n;
+    int n;
 
 
 };

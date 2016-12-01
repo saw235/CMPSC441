@@ -1,6 +1,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQuickWindow>
+#include <QQuickView>
 
 #include "guihandler.h"
 
