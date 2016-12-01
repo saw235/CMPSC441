@@ -28,11 +28,12 @@ Window {
 
     function conState(state){
         if(state){
-            connectBtn.text = "Disconnect";
+            clientWindow.disconnect();
+            connectBtn.text = "Connect";
         }
         else{
-            //clientWindow.disconnect();
-            connectBtn.text = "Connect";
+            clientWindow.connectToServer(ipInput.text, portInput.text);
+            connectBtn.text = "Disconnect";
         }
     }
 
@@ -106,7 +107,6 @@ Window {
                 y: 37
                 text: qsTr("Connect")
                 onClicked: {
-                    clientWindow.connectToServer(ipInput.text, portInput.text);
                     clientWindow.getConState();
                 }
             }

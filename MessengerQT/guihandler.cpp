@@ -27,7 +27,7 @@ void GuiHandler::connectToServer(QString ip, int port){
     if (sockfd < 0)
        { emit errorMsg("Error opening socket");return;}
     if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, NULL, sizeof(int)) < 0)
-      {printf("setsockopt(SO_REUSEADDR) failed"); return;}
+      {printf("setsockopt(SO_REUSEADDR) failed");}
 
     bzero((char *)&serv_addr, sizeof(serv_addr));
 
