@@ -34,8 +34,8 @@ public slots:
     void sendMsg(QString msg);
 
 private:
-    void static *read_handler(void *threadid);
-    //void *write_handler(void *sock);
+    static void  *read_handler(void *threadid);
+    static void  *write_handler(void *threadid);
     SSL_CTX *InitCTX(void);
 
     struct sockaddr_in serv_addr;
@@ -51,7 +51,7 @@ private:
     char wbuffer[256];
     SSL *ssl;
     int sockfd;
-    int n;
+        int n;
 
 
 };

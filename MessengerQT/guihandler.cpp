@@ -55,7 +55,7 @@ void GuiHandler::connectToServer(QString ip, int port){
     // printf("Connected with %s encryption\n", SSL_get_cipher(ssl));
 
     pthread_create(&read_thread, NULL, read_handler, (void*)this);
-    //pthread_create(&write_thread, NULL, write_handler, (void *)&sockfd);
+    pthread_create(&write_thread, NULL, write_handler, (void *)this);
 }
 
 void GuiHandler::disconnect(){
@@ -88,20 +88,21 @@ void *GuiHandler::read_handler(void *threadid) {
     }
   }
 }
-//void *GuiHandler::write_handler(void *sock) {
 
-//  while (1) {
-//    if (b_exit) {
-//      pthread_exit(NULL);
-//    }
-//    printf("\nPlease enter message: ");
+void *GuiHandler::write_handler(void *threadid) {
+  GuiHandler *g = (GuiHandler *) threadid;
+  while (1) {
+    if (g->b_exit) {
+      pthread_exit(NULL);
+    }
+    printf("\nPlease enter message: ");
 
-//    bzero(wbuffer, 256);
-//    fgets(wbuffer, 255, stdin);
+    bzero(g->wbuffer, 256);
+    fgets(g->wbuffer, 255, stdin);
 
-//    n = SSL_write(ssl, wbuffer, strlen(wbuffer));
-//  }
-//}
+    g->n = SSL_write(g->ssl, g->wbuffer, strlen(g->wbuffer));
+  }
+}
 
 
 SSL_CTX *GuiHandler::InitCTX(void) {
